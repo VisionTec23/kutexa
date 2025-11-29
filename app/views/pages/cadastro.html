@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kutexa - Cadastro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #14532D;
+            --accent: #C8A951;
+            --light: #F4F1EC;
+            --white: #FFFFFF;
+            --dark-bg: #0A2918;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 1rem;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 500px; /* Largura maior para formato retangular */
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .register-card {
+            background: rgba(244, 241, 236, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(200, 169, 81, 0.15);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(200, 169, 81, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .register-card:hover {
+            border-color: rgba(200, 169, 81, 0.25);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(200, 169, 81, 0.2);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo p {
+            color: rgba(244, 241, 236, 0.8);
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(200, 169, 81, 0.7);
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.8rem;
+            background: rgba(244, 241, 236, 0.08);
+            border: 1px solid rgba(200, 169, 81, 0.2);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23C8A951' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px;
+            padding-right: 2.5rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(244, 241, 236, 0.12);
+            box-shadow: 0 0 0 2px rgba(200, 169, 81, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(244, 241, 236, 0.4);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(244, 241, 236, 0.5);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 1.1rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle:hover {
+            color: var(--accent);
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: rgba(244, 241, 236, 0.8);
+        }
+
+        .terms input[type="checkbox"] {
+            margin-top: 0.2rem;
+            accent-color: var(--accent);
+            width: 18px;
+            height: 18px;
+        }
+
+        .terms a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(200, 169, 81, 0.3);
+        }
+
+        .register-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-link {
+            text-align: center;
+            color: rgba(244, 241, 236, 0.8);
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        .login-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .security-notice {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(20, 83, 45, 0.2);
+            border: 1px solid rgba(200, 169, 81, 0.1);
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(244, 241, 236, 0.6);
+        }
+
+        .security-notice i {
+            color: var(--accent);
+            margin-right: 0.5rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .register-container {
+                max-width: 400px;
+            }
+            
+            .register-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .register-container {
+                max-width: 300px;
+            }
+            
+            .register-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-card">
+            <div class="logo">
+                <h1>Kutexa</h1>
+                <p>Criar Nova Conta</p>
+            </div>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="entityType">Tipo de Entidade</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-building"></i>
+                        <select id="entityType" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="empresa">Empresa/Organização</option>
+                            <option value="individual">Individual/Autónomo</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="name" placeholder="Digite seu nome completo" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" placeholder="seu@email.com" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Senha de Acesso</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Crie uma senha segura" required>
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="terms">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">
+                        Concordo com os <a href="#">Termos de Serviço</a> e 
+                        <a href="#">Política de Privacidade</a>
+                    </label>
+                </div>
+                
+                <button type="submit" onclick="window.location.href='dashboard.html'" class="register-btn">Criar Conta</button>
+                
+                <div class="login-link">
+                    Já tem uma conta? <a href="login.html">Fazer Login</a>
+                </div>
+            </form>
+            
+            <div class="security-notice">
+                <i class="fas fa-shield-alt"></i>
+                Seus dados estão protegidos com criptografia avançada
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Password visibility toggle
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordInput = document.getElementById('password');
+        
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle eye icon
+            const icon = this.querySelector('i');
+            if (type === 'text') {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Form submission
+        const registerForm = document.getElementById('registerForm');
+        
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('.register-btn');
+            const originalText = submitBtn.textContent;
+            
+            // Show loading state
+            submitBtn.textContent = 'Criando Conta...';
+            submitBtn.disabled = true;
+            
+            // Simulate registration process
+            setTimeout(() => {
+                const entityType = document.getElementById('entityType').value;
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const terms = document.getElementById('terms').checked;
+                
+                if (entityType && name && email && password && terms) {
+                    alert(`✅ Conta criada com sucesso! Bem-vindo(a) à Kutexa, ${name}!`);
+                    registerForm.reset();
+                } else {
+                    alert('❌ Por favor, preencha todos os campos e aceite os termos.');
+                }
+                
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Add focus effects to inputs
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.parentElement.querySelector('label').style.color = 'var(--accent)';
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.parentElement.querySelector('label').style.color = 'var(--accent)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

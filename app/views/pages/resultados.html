@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kutexa - Resumo da Reconciliação</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #14532D;
+            --accent: #C8A951;
+            --light: #F4F1EC;
+            --white: #FFFFFF;
+            --dark-bg: #0A2918;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--white);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            height: 70px;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--dark-bg);
+            transform: translateY(-2px);
+        }
+
+        /* Conteúdo */
+        .content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Cards de Resumo */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--light);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-card.success {
+            border-top: 4px solid var(--success);
+        }
+
+        .summary-card.warning {
+            border-top: 4px solid var(--warning);
+        }
+
+        .summary-card.error {
+            border-top: 4px solid var(--error);
+        }
+
+        .summary-card.primary {
+            border-top: 4px solid var(--primary);
+        }
+
+        .summary-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+        }
+
+        .summary-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .summary-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .summary-icon.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .summary-icon.primary {
+            background: rgba(20, 83, 45, 0.1);
+            color: var(--primary);
+        }
+
+        .summary-card h3 {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-value.success {
+            color: var(--success);
+        }
+
+        .summary-value.warning {
+            color: var(--warning);
+        }
+
+        .summary-value.error {
+            color: var(--error);
+        }
+
+        .summary-value.primary {
+            color: var(--primary);
+        }
+
+        /* Seções de Detalhes */
+        .details-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .section-header .badge {
+            background: var(--accent);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Tabelas */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .data-table tr:hover {
+            background: rgba(200, 169, 81, 0.05);
+        }
+
+        .similarity {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .similarity.high {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .similarity.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .similarity.low {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        /* Lista de Faturas */
+        .files-list {
+            margin-top: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .file-details {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .file-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Mensagem de Estado Vazio */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--light);
+        }
+
+        /* Botões de Ação */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+        }
+
+        .action-btn.secondary {
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid var(--light);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Indicador de Carregamento */
+        /* No resultados.html - atualize o loading existente */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    flex-direction: column;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(20, 83, 45, 0.2);
+    border-left: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.loading p {
+    color: var(--primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-left: 0;
+}
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .logo h2 {
+                font-size: 1.2rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <h2>Kutexa</h2>
+        </div>
+        <div class="user-actions">
+            <button class="back-btn" onclick="window.location.href='reconciliamento.html'">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteúdo -->
+    <main class="content">
+        <div class="page-header">
+            <h1>Resumo da Reconciliação</h1>
+            <p>Resultado do processo de reconciliação bancária</p>
+        </div>
+
+        <!-- Indicador de Carregamento -->
+        <div class="loading" id="loadingIndicator">
+            <div class="spinner"></div>
+            <p style="margin-left: 1rem;">Carregando resultados...</p>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="summary-cards" id="summaryCards" style="display: none;">
+            <div class="summary-card primary">
+                <div class="summary-icon primary">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <h3>Total de Faturas</h3>
+                <div class="summary-value primary" id="totalFaturas">0</div>
+            </div>
+            <div class="summary-card primary">
+                <div class="summary-icon primary">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3>Total de Transações</h3>
+                <div class="summary-value primary" id="totalTransacoes">0</div>
+            </div>
+            <div class="summary-card success">
+                <div class="summary-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Correspondências</h3>
+                <div class="summary-value success" id="correspondencias">0</div>
+            </div>
+            <div class="summary-card error">
+                <div class="summary-icon error">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h3>Não Reconciliadas</h3>
+                <div class="summary-value error" id="naoReconciliadas">0</div>
+            </div>
+        </div>
+
+        <!-- Tabela de Correspondências -->
+        <section class="details-section" id="correspondenciasSection" style="display: none;">
+            <div class="section-header">
+                <h2>Correspondências Encontradas</h2>
+                <span class="badge" id="correspondenciasCount">0 itens</span>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Fatura</th>
+                            <th>Fornecedor</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Transação</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Similaridade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="correspondenciasTable">
+                        <!-- Dados serão preenchidos via JavaScript -->
+                    </tbody>
+                </table>
+                <div class="empty-state" id="emptyCorrespondencias">
+                    <i class="fas fa-search"></i>
+                    <h3>Nenhuma correspondência encontrada</h3>
+                    <p>Não foram identificadas correspondências entre faturas e transações bancárias</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Faturas sem Correspondência -->
+        <section class="details-section" id="faturasSemSection" style="display: none;">
+            <div class="section-header">
+                <h2>Faturas sem Correspondência</h2>
+                <span class="badge" id="faturasSemCount">0 itens</span>
+            </div>
+            <div class="files-list" id="faturasSemList">
+                <!-- Dados serão preenchidos via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Transações sem Correspondência -->
+        <section class="details-section" id="transacoesSemSection" style="display: none;">
+            <div class="section-header">
+                <h2>Transações sem Correspondência</h2>
+                <span class="badge" id="transacoesSemCount">0 itens</span>
+            </div>
+            <div class="empty-state" id="emptyTransacoes">
+                <i class="fas fa-check-circle"></i>
+                <h3>Todas as transações foram reconciliadas</h3>
+                <p>Não há transações bancárias sem correspondência com faturas</p>
+            </div>
+            <div class="files-list" id="transacoesSemList" style="display: none;">
+                <!-- Dados serão preenchidos via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Botões de Ação -->
+        <div class="action-buttons" id="actionButtons" style="display: none;">
+            <button class="action-btn secondary" onclick="window.location.href='reconciliamento.html'">
+                <i class="fas fa-redo"></i> Nova Reconciliação
+            </button>
+            <button class="action-btn primary" onclick="window.location.href='relatorios.html'">
+                <i class="fas fa-chart-bar"></i> Ver Relatório Detalhado
+            </button>
+        </div>
+    </main>
+
+ <script>
+    // Função para obter dados da reconciliação
+    function getReconciliationData() {
+        try {
+            const savedData = localStorage.getItem('reconciliationData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                // Limpa os dados do localStorage após usar
+                localStorage.removeItem('reconciliationData');
+                return data;
+            }
+        } catch (error) {
+            console.error('Erro ao recuperar dados:', error);
+        }
+        
+        // Se não houver dados, redireciona de volta
+        setTimeout(() => {
+            alert('Nenhum dado de reconciliação encontrado. Redirecionando...');
+            window.location.href = 'reconciliamento.html';
+        }, 1000);
+        
+        return null;
+    }
+
+    // Preencher dados na página
+    document.addEventListener('DOMContentLoaded', function() {
+        const reconciliationData = getReconciliationData();
+        
+        if (!reconciliationData) {
+            return;
+        }
+
+        console.log("Dados recebidos da API:", reconciliationData);
+
+        // Esconde o indicador de carregamento
+        document.getElementById('loadingIndicator').style.display = 'none';
+        
+        // Mostra o conteúdo principal
+        document.getElementById('summaryCards').style.display = 'grid';
+        document.getElementById('actionButtons').style.display = 'flex';
+        
+        // CORREÇÃO: Preencher cards de resumo com dados corretos
+        document.getElementById('totalFaturas').textContent = reconciliationData.resumo.totalFaturas;
+        document.getElementById('totalTransacoes').textContent = reconciliationData.resumo.totalTransacoes;
+        document.getElementById('correspondencias').textContent = reconciliationData.resumo.correspondencias;
+        document.getElementById('naoReconciliadas').textContent = reconciliationData.resumo.naoReconciliadas;
+
+        // CORREÇÃO: Preencher tabela de correspondências
+        const correspondenciasTable = document.getElementById('correspondenciasTable');
+        const emptyCorrespondencias = document.getElementById('emptyCorrespondencias');
+        const correspondenciasCount = document.getElementById('correspondenciasCount');
+        const correspondenciasSection = document.getElementById('correspondenciasSection');
+        
+        // CORREÇÃO: Filtrar apenas correspondências válidas (com transação não nula E similaridade > 0)
+        const correspondenciasValidas = reconciliationData.tabela.filter(item => 
+            item.transacao && item.transacao.descricao !== null && item.similaridade > 0
+        );
+        
+        console.log("Delcio", correspondenciasValidas)
+        if (correspondenciasValidas.length > 0) {
+            correspondenciasSection.style.display = 'block';
+            emptyCorrespondencias.style.display = 'none';
+            correspondenciasCount.textContent = correspondenciasValidas.length + ' item(ns)';
+            
+            correspondenciasValidas.forEach(item => {
+                const row = document.createElement('tr');
+                
+                const similarityClass = item.similaridade > 0.7 ? 'high' : 
+                                       item.similaridade > 0.4 ? 'medium' : 'low';
+                
+                row.innerHTML = `
+                    <td>${item.fatura.arquivo}</td>
+                    <td>${item.fatura.nome}</td>
+                    <td>${item.fatura.data}</td>
+                    <td class="file-value">${formatCurrency(item.fatura.valor)}</td>
+                    <td>${item.transacao.descricao || '-'}</td>
+                    <td>${item.transacao.data || '-'}</td>
+                    <td class="file-value">${item.transacao.valor ? formatCurrency(item.transacao.valor) : '-'}</td>
+                    <td><span class="similarity ${similarityClass}">${(item.similaridade * 100).toFixed(1)}%</span></td>
+                `;
+                
+                correspondenciasTable.appendChild(row);
+            });
+        } else {
+            correspondenciasSection.style.display = 'block';
+            correspondenciasTable.style.display = 'none';
+            emptyCorrespondencias.style.display = 'block';
+            correspondenciasCount.textContent = '0 itens';
+        }
+
+        // CORREÇÃO: Preencher faturas sem correspondência
+        const faturasSemList = document.getElementById('faturasSemList');
+        const faturasSemCount = document.getElementById('faturasSemCount');
+        const faturasSemSection = document.getElementById('faturasSemSection');
+        
+        // CORREÇÃO: Usar o array específico de faturas sem correspondência
+        if (reconciliationData.faturasSemCorrespondencia && reconciliationData.faturasSemCorrespondencia.length > 0) {
+            faturasSemSection.style.display = 'block';
+            faturasSemCount.textContent = reconciliationData.faturasSemCorrespondencia.length + ' item(ns)';
+            
+            reconciliationData.faturasSemCorrespondencia.forEach(fatura => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                fileItem.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${fatura.arquivo}</div>
+                        <div class="file-details">
+                            <strong>${fatura.nome}</strong> • ${fatura.data} • 
+                            <span class="file-value">${formatCurrency(fatura.valor)}</span>
+                        </div>
+                    </div>
+                    <div class="similarity low">${(fatura.similaridade * 100).toFixed(1)}%</div>
+                `;
+                
+                faturasSemList.appendChild(fileItem);
+            });
+        } else {
+            faturasSemSection.style.display = 'block';
+            faturasSemList.innerHTML = '<div class="empty-state"><i class="fas fa-check-circle"></i><h3>Todas as faturas foram reconciliadas</h3></div>';
+            faturasSemCount.textContent = '0 itens';
+        }
+
+        // CORREÇÃO: Preencher transações sem correspondência
+        const transacoesSemCount = document.getElementById('transacoesSemCount');
+        const emptyTransacoes = document.getElementById('emptyTransacoes');
+        const transacoesSemList = document.getElementById('transacoesSemList');
+        const transacoesSemSection = document.getElementById('transacoesSemSection');
+        
+        // CORREÇÃO: Usar o array específico de transações sem correspondência
+        if (reconciliationData.transacoesSemCorrespondencia && reconciliationData.transacoesSemCorrespondencia.length > 0) {
+            transacoesSemSection.style.display = 'block';
+            emptyTransacoes.style.display = 'none';
+            transacoesSemList.style.display = 'block';
+            transacoesSemCount.textContent = reconciliationData.transacoesSemCorrespondencia.length + ' item(ns)';
+            
+            reconciliationData.transacoesSemCorrespondencia.forEach(transacao => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                fileItem.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${transacao.descricao || 'Transação sem descrição'}</div>
+                        <div class="file-details">
+                            ${transacao.data || 'Data não disponível'} • 
+                            <span class="file-value">${formatCurrency(transacao.valor)}</span>
+                        </div>
+                    </div>
+                `;
+                
+                transacoesSemList.appendChild(fileItem);
+            });
+        } else {
+            transacoesSemSection.style.display = 'block';
+            emptyTransacoes.style.display = 'block';
+            transacoesSemCount.textContent = '0 itens';
+        }
+    });
+
+    // Função para formatar valores monetários
+    function formatCurrency(value) {
+        return new Intl.NumberFormat('pt-PT', {
+            style: 'currency',
+            currency: 'AOA'
+        }).format(value);
+    }
+</script>

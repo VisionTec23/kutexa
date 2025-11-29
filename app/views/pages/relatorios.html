@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kutexa - Relatórios</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #14532D;
+            --accent: #C8A951;
+            --light: #F4F1EC;
+            --white: #FFFFFF;
+            --dark-bg: #0A2918;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--white);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Layout Principal */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary) 100%);
+            color: var(--white);
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(200, 169, 81, 0.3);
+        }
+
+        .sidebar-header h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: rgba(200, 169, 81, 0.15);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--accent);
+        }
+
+        .submenu {
+            background: rgba(0, 0, 0, 0.2);
+            margin-left: 1.5rem;
+            border-radius: 5px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+
+        .submenu.show {
+            max-height: 200px;
+        }
+
+        .submenu-item {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        /* Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .user-greeting h1 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .user-greeting p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn, .user-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover, .user-profile:hover {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Conteúdo */
+        .content {
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Filtros */
+        .filters-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light);
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters-header h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .filter-toggle {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .filters-grid.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .filter-input, .filter-select {
+            padding: 0.8rem;
+            border: 1px solid var(--light);
+            border-radius: 8px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.1);
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-btn.primary {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+        }
+
+        .filter-btn.secondary {
+            background: var(--light);
+            color: var(--primary);
+            border: 1px solid var(--light);
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Ações em Lote */
+        .batch-actions {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .batch-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .batch-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .batch-text {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .batch-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .batch-btn {
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .batch-btn.export {
+            background: var(--success);
+            color: var(--white);
+            border: none;
+        }
+
+        .batch-btn.delete {
+            background: var(--error);
+            color: var(--white);
+            border: none;
+        }
+
+        .batch-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tabela de Relatórios */
+        .reports-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--light);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reports-table th {
+            text-align: left;
+            padding: 1rem;
+            border-bottom: 2px solid var(--light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .reports-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light);
+        }
+
+        .reports-table tr:hover {
+            background: rgba(200, 169, 81, 0.05);
+        }
+
+        .report-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status.completed {
+            background: rgba(20, 83, 45, 0.1);
+            color: var(--primary);
+        }
+
+        .status.pending {
+            background: rgba(200, 169, 81, 0.1);
+            color: var(--accent);
+        }
+
+        .status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .action-btn:hover {
+            color: var(--accent);
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        .action-btn.view:hover {
+            color: var(--primary);
+        }
+
+        .action-btn.export:hover {
+            color: var(--success);
+        }
+
+        .action-btn.delete:hover {
+            color: var(--error);
+        }
+
+        /* Paginação */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .pagination-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light);
+            color: var(--primary);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .pagination-btn:hover:not(.active) {
+            background: rgba(200, 169, 81, 0.2);
+        }
+
+        /* Menu Mobile */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Modal de Exportação */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: var(--error);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .export-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: 2px solid var(--light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-option:hover {
+            border-color: var(--accent);
+            background: rgba(200, 169, 81, 0.05);
+        }
+
+        .export-option.selected {
+            border-color: var(--primary);
+            background: rgba(20, 83, 45, 0.05);
+        }
+
+        .export-icon {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .export-option.selected .export-icon {
+            color: var(--primary);
+        }
+
+        .export-name {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .filters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .batch-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .reports-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            .pagination {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-greeting h1 {
+                font-size: 1.1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Kutexa</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='dashboard.html'">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </div>
+                <div class="menu-item" id="companiesMenu">
+                    <i class="fas fa-building"></i>
+                    <span>Empresas</span>
+                    <i class="fas fa-chevron-down" style="float: right; font-size: 0.8rem;"></i>
+                </div>
+                <div class="submenu" id="companiesSubmenu">
+                    <div class="submenu-item" onclick="window.location.href='cadastrar-empresa.html'">Cadastrar Empresa</div>
+                    <div class="submenu-item" onclick="window.location.href='ver-empresas.html'">Ver Empresas</div>
+                </div>
+                <div class="menu-item" id="reconciliationMenu">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Reconciliamento</span>
+                    <i class="fas fa-chevron-down" style="float: right; font-size: 0.8rem;"></i>
+                </div>
+                <div class="submenu" id="reconciliationSubmenu">
+                    <div class="submenu-item" onclick="window.location.href='reconciliamento.html'">Reconciliamento em Tempo Real</div>
+                    <div class="submenu-item" onclick="window.location.href='reconciliamento-erp.html'">Reconciliamento com ERP</div>
+                </div>
+                <div class="menu-item active" onclick="window.location.href='relatorios.html'">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='analise-financeira.html'">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analise Financeira</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='configuracoes.html'">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-greeting">
+                    <h1>Relatórios de Reconciliação</h1>
+                    <p>Visualize e exporte relatórios detalhados</p>
+                </div>
+                <div class="user-actions">
+                    <div class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="user-profile">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Conteúdo -->
+            <main class="content">
+                <div class="page-header">
+                    <h1>Relatórios</h1>
+                    <p>Gerencie e exporte relatórios de reconciliação</p>
+                </div>
+
+                <!-- Filtros -->
+                <section class="filters-section">
+                    <div class="filters-header">
+                        <h2>Filtros</h2>
+                        <button class="filter-toggle" id="filterToggle">
+                            <i class="fas fa-filter"></i> Filtros
+                        </button>
+                    </div>
+                    <div class="filters-grid" id="filtersGrid">
+                        <div class="filter-group">
+                            <label class="filter-label">Empresa</label>
+                            <select class="filter-select" id="companyFilter">
+                                <option value="">Todas as empresas</option>
+                                <option value="empresa-a">Empresa A Ltda</option>
+                                <option value="empresa-b">Comércio B SA</option>
+                                <option value="empresa-c">Indústria C</option>
+                                <option value="empresa-d">Serviços D ME</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Data Inicial</label>
+                            <input type="date" class="filter-input" id="startDateFilter">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Data Final</label>
+                            <input type="date" class="filter-input" id="endDateFilter">
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Status</label>
+                            <select class="filter-select" id="statusFilter">
+                                <option value="">Todos os status</option>
+                                <option value="completed">Concluído</option>
+                                <option value="pending">Pendente</option>
+                                <option value="error">Erro</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">Tipo</label>
+                            <select class="filter-select" id="typeFilter">
+                                <option value="">Todos os tipos</option>
+                                <option value="daily">Diário</option>
+                                <option value="weekly">Semanal</option>
+                                <option value="monthly">Mensal</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="filter-btn primary" onclick="applyFilters()">
+                                <i class="fas fa-search"></i> Aplicar Filtros
+                            </button>
+                            <button class="filter-btn secondary" onclick="clearFilters()">
+                                <i class="fas fa-eraser"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ações em Lote -->
+                <div class="batch-actions" id="batchActions" style="display: none;">
+                    <div class="batch-info">
+                        <input type="checkbox" class="batch-checkbox" id="selectAllReports">
+                        <span class="batch-text" id="selectedCount">0 relatórios selecionados</span>
+                    </div>
+                    <div class="batch-buttons">
+                        <button class="batch-btn export" onclick="openExportModal()">
+                            <i class="fas fa-file-export"></i> Exportar Selecionados
+                        </button>
+                        <button class="batch-btn delete" onclick="deleteSelectedReports()">
+                            <i class="fas fa-trash"></i> Eliminar Selecionados
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Relatórios -->
+                <section class="reports-section">
+                    <div class="section-header">
+                        <h2>Relatórios de Reconciliação</h2>
+                        <button class="filter-btn primary" onclick="openExportModal()">
+                            <i class="fas fa-file-export"></i> Exportar Todos
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="reports-table">
+                            <thead>
+                                <tr>
+                                    <th width="40">
+                                        <input type="checkbox" class="report-checkbox" id="selectAllHeader">
+                                    </th>
+                                    <th>Nome do Relatório</th>
+                                    <th>Empresa</th>
+                                    <th>Data</th>
+                                    <th>Transações</th>
+                                    <th>Status</th>
+                                    <th width="150">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTableBody">
+                                <!-- Dados serão preenchidos via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
+                    <div class="pagination">
+                        <div class="pagination-info">
+                            Mostrando <span id="showingFrom">1</span>-<span id="showingTo">10</span> de <span id="totalReports">50</span> relatórios
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="pagination-btn" onclick="changePage('prev')">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <button class="pagination-btn">4</button>
+                            <button class="pagination-btn">5</button>
+                            <button class="pagination-btn" onclick="changePage('next')">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal de Exportação -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Exportar Relatórios</h3>
+                <button class="modal-close" onclick="closeExportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Selecione o formato para exportação:</p>
+                <div class="export-options">
+                    <div class="export-option" data-format="pdf" onclick="selectExportFormat('pdf')">
+                        <i class="fas fa-file-pdf export-icon"></i>
+                        <span class="export-name">PDF</span>
+                    </div>
+                    <div class="export-option" data-format="excel" onclick="selectExportFormat('excel')">
+                        <i class="fas fa-file-excel export-icon"></i>
+                        <span class="export-name">Excel</span>
+                    </div>
+                    <div class="export-option" data-format="csv" onclick="selectExportFormat('csv')">
+                        <i class="fas fa-file-csv export-icon"></i>
+                        <span class="export-name">CSV</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="filter-btn secondary" onclick="closeExportModal()">
+                    Cancelar
+                </button>
+                <button class="filter-btn primary" id="confirmExport" onclick="exportReports()" disabled>
+                    <i class="fas fa-download"></i> Exportar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo
+        const reportsData = [
+            { id: 1, name: "Relatório Mensal - Dez 2024", company: "Empresa A Ltda", date: "15/12/2024", transactions: 247, status: "completed" },
+            { id: 2, name: "Relatório Semanal - Sem 50", company: "Comércio B SA", date: "14/12/2024", transactions: 189, status: "completed" },
+            { id: 3, name: "Relatório Diário - 14/12", company: "Indústria C", date: "14/12/2024", transactions: 312, status: "pending" },
+            { id: 4, name: "Relatório Mensal - Nov 2024", company: "Serviços D ME", date: "13/12/2024", transactions: 156, status: "completed" },
+            { id: 5, name: "Relatório Personalizado", company: "Empresa A Ltda", date: "12/12/2024", transactions: 98, status: "error" },
+            { id: 6, name: "Relatório Semanal - Sem 49", company: "Comércio B SA", date: "11/12/2024", transactions: 203, status: "completed" },
+            { id: 7, name: "Relatório Diário - 10/12", company: "Indústria C", date: "10/12/2024", transactions: 178, status: "completed" },
+            { id: 8, name: "Relatório Mensal - Out 2024", company: "Serviços D ME", date: "09/12/2024", transactions: 265, status: "completed" },
+            { id: 9, name: "Relatório Semanal - Sem 48", company: "Empresa A Ltda", date: "08/12/2024", transactions: 142, status: "pending" },
+            { id: 10, name: "Relatório Diário - 07/12", company: "Comércio B SA", date: "07/12/2024", transactions: 87, status: "completed" }
+        ];
+
+        // Variáveis globais
+        let selectedReports = new Set();
+        let currentExportFormat = null;
+        let currentPage = 1;
+        const itemsPerPage = 5;
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menu Mobile
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.getElementById('sidebar');
+            const companiesMenu = document.getElementById('companiesMenu');
+            const companiesSubmenu = document.getElementById('companiesSubmenu');
+            const reconciliationMenu = document.getElementById('reconciliationMenu');
+            const reconciliationSubmenu = document.getElementById('reconciliationSubmenu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+
+            // Submenu de Empresas
+            companiesMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
+                companiesSubmenu.classList.toggle('show');
+            });
+
+            // Submenu de Reconciliação
+            reconciliationMenu.addEventListener('click', (e) => {
+                e.stopPropagation();
+                reconciliationSubmenu.classList.toggle('show');
+            });
+
+            // Fechar menu ao clicar fora (mobile)
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 1024 && !sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    sidebar.classList.remove('active');
+                }
+            });
+
+            // Toggle dos filtros
+            const filterToggle = document.getElementById('filterToggle');
+            const filtersGrid = document.getElementById('filtersGrid');
+            
+            filterToggle.addEventListener('click', () => {
+                filtersGrid.classList.toggle('collapsed');
+                const icon = filterToggle.querySelector('i');
+                if (filtersGrid.classList.contains('collapsed')) {
+                    icon.className = 'fas fa-chevron-down';
+                } else {
+                    icon.className = 'fas fa-filter';
+                }
+            });
+
+            // Inicialmente mostrar filtros
+            filtersGrid.classList.remove('collapsed');
+
+            // Carregar dados
+            loadReportsTable();
+            setupCheckboxEvents();
+        });
+
+        // Carregar tabela de relatórios
+        function loadReportsTable() {
+            const tableBody = document.getElementById('reportsTableBody');
+            tableBody.innerHTML = '';
+
+            // Calcular índices para paginação
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, reportsData.length);
+            
+            // Atualizar informações de paginação
+            document.getElementById('showingFrom').textContent = startIndex + 1;
+            document.getElementById('showingTo').textContent = endIndex;
+            document.getElementById('totalReports').textContent = reportsData.length;
+
+            // Preencher tabela
+            for (let i = startIndex; i < endIndex; i++) {
+                const report = reportsData[i];
+                const isSelected = selectedReports.has(report.id);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="report-checkbox" data-id="${report.id}" ${isSelected ? 'checked' : ''}>
+                    </td>
+                    <td>${report.name}</td>
+                    <td>${report.company}</td>
+                    <td>${report.date}</td>
+                    <td>${report.transactions}</td>
+                    <td><span class="status ${report.status}">${getStatusText(report.status)}</span></td>
+                    <td>
+                        <div class="actions">
+                            <button class="action-btn view" title="Visualizar" onclick="viewReport(${report.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn export" title="Exportar" onclick="exportSingleReport(${report.id})">
+                                <i class="fas fa-file-export"></i>
+                            </button>
+                            <button class="action-btn delete" title="Eliminar" onclick="deleteReport(${report.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+
+            // Atualizar seleção
+            updateBatchActions();
+        }
+
+        // Configurar eventos dos checkboxes
+        function setupCheckboxEvents() {
+            // Checkbox "Selecionar Todos" no cabeçalho
+            document.getElementById('selectAllHeader').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.report-checkbox:not(#selectAllHeader)');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    const reportId = parseInt(checkbox.getAttribute('data-id'));
+                    
+                    if (this.checked) {
+                        selectedReports.add(reportId);
+                    } else {
+                        selectedReports.delete(reportId);
+                    }
+                });
+                
+                updateBatchActions();
+            });
+
+            // Checkbox "Selecionar Todos" na barra de ações
+            document.getElementById('selectAllReports').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.report-checkbox:not(#selectAllHeader)');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    const reportId = parseInt(checkbox.getAttribute('data-id'));
+                    
+                    if (this.checked) {
+                        selectedReports.add(reportId);
+                    } else {
+                        selectedReports.delete(reportId);
+                    }
+                });
+                
+                document.getElementById('selectAllHeader').checked = this.checked;
+                updateBatchActions();
+            });
+        }
+
+        // Atualizar seleção quando um checkbox individual é alterado
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('report-checkbox') && e.target.id !== 'selectAllHeader' && e.target.id !== 'selectAllReports') {
+                const reportId = parseInt(e.target.getAttribute('data-id'));
+                
+                if (e.target.checked) {
+                    selectedReports.add(reportId);
+                } else {
+                    selectedReports.delete(reportId);
+                }
+                
+                updateBatchActions();
+            }
+        });
+
+        // Atualizar barra de ações em lote
+        function updateBatchActions() {
+            const batchActions = document.getElementById('batchActions');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (selectedReports.size > 0) {
+                batchActions.style.display = 'flex';
+                selectedCount.textContent = `${selectedReports.size} relatório(s) selecionado(s)`;
+                
+                // Atualizar estado do checkbox "Selecionar Todos"
+                const totalCheckboxes = document.querySelectorAll('.report-checkbox:not(#selectAllHeader)').length;
+                document.getElementById('selectAllHeader').checked = selectedReports.size === totalCheckboxes;
+                document.getElementById('selectAllReports').checked = selectedReports.size === totalCheckboxes;
+            } else {
+                batchActions.style.display = 'none';
+            }
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            // Aqui você implementaria a lógica de filtragem real
+            // Por enquanto, apenas recarregamos a tabela
+            alert('Filtros aplicados! (Funcionalidade simulada)');
+            loadReportsTable();
+        }
+
+        // Limpar filtros
+        function clearFilters() {
+            document.getElementById('companyFilter').value = '';
+            document.getElementById('startDateFilter').value = '';
+            document.getElementById('endDateFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            
+            alert('Filtros limpos!');
+            loadReportsTable();
+        }
+
+        // Visualizar relatório
+        function viewReport(id) {
+            alert(`Visualizando relatório ${id}`);
+            // Aqui você redirecionaria para a página de visualização do relatório
+        }
+
+        // Exportar relatório individual
+        function exportSingleReport(id) {
+            currentExportFormat = null;
+            selectedReports.clear();
+            selectedReports.add(id);
+            openExportModal();
+        }
+
+        // Abrir modal de exportação
+        function openExportModal() {
+            document.getElementById('exportModal').classList.add('active');
+        }
+
+        // Fechar modal de exportação
+        function closeExportModal() {
+            document.getElementById('exportModal').classList.remove('active');
+            currentExportFormat = null;
+            resetExportOptions();
+        }
+
+        // Selecionar formato de exportação
+        function selectExportFormat(format) {
+            currentExportFormat = format;
+            resetExportOptions();
+            
+            const selectedOption = document.querySelector(`.export-option[data-format="${format}"]`);
+            selectedOption.classList.add('selected');
+            
+            document.getElementById('confirmExport').disabled = false;
+        }
+
+        // Resetar opções de exportação
+        function resetExportOptions() {
+            const options = document.querySelectorAll('.export-option');
+            options.forEach(option => {
+                option.classList.remove('selected');
+            });
+        }
+
+        // Exportar relatórios
+        function exportReports() {
+            if (!currentExportFormat) {
+                alert('Por favor, selecione um formato de exportação.');
+                return;
+            }
+            
+            const reportIds = Array.from(selectedReports);
+            alert(`Exportando ${reportIds.length} relatório(s) em formato ${currentExportFormat.toUpperCase()}`);
+            
+            // Aqui você implementaria a lógica real de exportação
+            // Por exemplo, fazer uma requisição para o backend
+            
+            closeExportModal();
+        }
+
+        // Eliminar relatório individual
+        function deleteReport(id) {
+            if (confirm(`Tem certeza que deseja eliminar o relatório ${id}?`)) {
+                // Aqui você implementaria a lógica real de eliminação
+                alert(`Relatório ${id} eliminado com sucesso! (Funcionalidade simulada)`);
+                loadReportsTable();
+            }
+        }
+
+        // Eliminar relatórios selecionados
+        function deleteSelectedReports() {
+            if (selectedReports.size === 0) {
+                alert('Por favor, selecione pelo menos um relatório para eliminar.');
+                return;
+            }
+            
+            if (confirm(`Tem certeza que deseja eliminar ${selectedReports.size} relatório(s) selecionado(s)?`)) {
+                // Aqui você implementaria a lógica real de eliminação
+                alert(`${selectedReports.size} relatório(s) eliminado(s) com sucesso! (Funcionalidade simulada)`);
+                selectedReports.clear();
+                loadReportsTable();
+            }
+        }
+
+        // Mudar página
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 'next' && currentPage < Math.ceil(reportsData.length / itemsPerPage)) {
+                currentPage++;
+            }
+            
+            loadReportsTable();
+        }
+
+        // Obter texto do status
+        function getStatusText(status) {
+            switch(status) {
+                case 'completed': return 'Concluído';
+                case 'pending': return 'Pendente';
+                case 'error': return 'Erro';
+                default: return status;
+            }
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

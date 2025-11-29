@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kutexa - Ativar Licença</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #14532D;
+            --accent: #C8A951;
+            --light: #F4F1EC;
+            --white: #FFFFFF;
+            --dark-bg: #0A2918;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 1rem;
+        }
+
+        .license-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .license-card {
+            background: rgba(244, 241, 236, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(200, 169, 81, 0.15);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(200, 169, 81, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .license-card:hover {
+            border-color: rgba(200, 169, 81, 0.25);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(200, 169, 81, 0.2);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            color: var(--accent);
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo p {
+            color: rgba(244, 241, 236, 0.8);
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--accent);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .license-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(244, 241, 236, 0.08);
+            border: 1px solid rgba(200, 169, 81, 0.2);
+            border-radius: 8px;
+            color: var(--light);
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .license-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(244, 241, 236, 0.12);
+            box-shadow: 0 0 0 2px rgba(200, 169, 81, 0.1);
+        }
+
+        .license-input::placeholder {
+            color: rgba(244, 241, 236, 0.4);
+            letter-spacing: normal;
+        }
+
+        .activate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .activate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(200, 169, 81, 0.3);
+        }
+
+        .back-link {
+            text-align: center;
+            color: rgba(244, 241, 236, 0.8);
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .license-container {
+                max-width: 350px;
+            }
+            .license-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="license-container">
+        <div class="license-card">
+            <div class="logo">
+                <h1>Kutexa</h1>
+                <p>Ativar Licença</p>
+            </div>
+            
+            <form id="licenseForm">
+                <div class="form-group">
+                    <label for="licenseKey">Chave de Licença</label>
+                    <input type="text" 
+                           id="licenseKey" 
+                           class="license-input"
+                           placeholder="XXXX-XXXX-XXXX-XXXX"
+                           required
+                           maxlength="19">
+                </div>
+                
+                <a href="dashboard.html"><button  type="submit" class="activate-btn">Ativar Licença</button></a>
+                
+                <div class="back-link">
+                    <a href="login.html">← Voltar ao Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Formatação automática da chave de licença
+        const licenseInput = document.getElementById('licenseKey');
+        
+        licenseInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/-/g, '');
+            
+            if (value.length > 16) {
+                value = value.substring(0, 16);
+            }
+            
+            // Formata como XXXX-XXXX-XXXX-XXXX
+            let formatted = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formatted += '-';
+                }
+                formatted += value[i];
+            }
+            
+            e.target.value = formatted;
+        });
+
+        // Form submission
+        const licenseForm = document.getElementById('licenseForm');
+        
+        licenseForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const licenseKey = licenseInput.value.replace(/-/g, '');
+            
+            if (licenseKey.length === 16) {
+                // Simular ativação
+                const btn = this.querySelector('.activate-btn');
+                btn.textContent = 'Ativando...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    alert('✅ Licença ativada com sucesso!');
+                    licenseForm.reset();
+                    btn.textContent = 'Ativar Licença';
+                    btn.disabled = false;
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            } else {
+                alert('❌ Por favor, insira uma chave de licença válida.');
+            }
+        });
+    </script>
+</body>
+</html>

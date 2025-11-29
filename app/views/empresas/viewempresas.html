@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kutexa - Empresas Cadastradas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #14532D;
+            --accent: #C8A951;
+            --light: #F4F1EC;
+            --white: #FFFFFF;
+            --dark-bg: #0A2918;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--white);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Layout Principal */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary) 100%);
+            color: var(--white);
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(200, 169, 81, 0.3);
+        }
+
+        .sidebar-header h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: rgba(200, 169, 81, 0.15);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--accent);
+        }
+
+        .submenu {
+            background: rgba(0, 0, 0, 0.2);
+            margin-left: 1.5rem;
+            border-radius: 5px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+
+        .submenu.show {
+            max-height: 200px;
+        }
+
+        .submenu-item {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        /* Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .user-greeting h1 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .user-greeting p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn, .user-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover, .user-profile:hover {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Conteúdo */
+        .content {
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .add-company-btn {
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-company-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(200, 169, 81, 0.3);
+        }
+
+        /* Filtros e Busca */
+        .filters-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light);
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 1px solid var(--light);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .filter-select {
+            padding: 0.8rem;
+            border: 1px solid var(--light);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--white);
+        }
+
+        .apply-filters {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apply-filters:hover {
+            background: var(--dark-bg);
+        }
+
+        /* Grid de Empresas */
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .company-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--light);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .company-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark-bg) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-name {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .company-nif {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .company-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        /* Contas Bancárias */
+        .bank-accounts {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light);
+        }
+
+        .bank-accounts-title {
+            color: var(--primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .account-item:last-child {
+            border-bottom: none;
+        }
+
+        .account-number {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .account-iban {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Status */
+        .company-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(20, 83, 45, 0.1);
+            color: var(--primary);
+        }
+
+        .status-inactive {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6B7280;
+        }
+
+        /* Menu Mobile */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .companies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-greeting h1 {
+                font-size: 1.1rem;
+            }
+
+            .company-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .company-actions {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Kutexa</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='dashboard.html'">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </div>
+                <div class="menu-item" id="companiesMenu">
+                    <i class="fas fa-building"></i>
+                    <span>Empresas</span>
+                    <i class="fas fa-chevron-down" style="float: right; font-size: 0.8rem;"></i>
+                </div>
+                <div class="submenu" id="companiesSubmenu">
+                    <div class="submenu-item" onclick="window.location.href='cadastroempresa.html'">Cadastrar Empresa</div>
+                    <div class="submenu-item active" onclick="window.location.href='viewempresas.html'">Ver Empresas</div>
+                </div>
+                <div class="menu-item" id="reconciliationMenu">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Reconciliamento</span>
+                    <i class="fas fa-chevron-down" style="float: right; font-size: 0.8rem;"></i>
+                </div>
+                <div class="submenu" id="reconciliationSubmenu">
+                    <div class="submenu-item" onclick="window.location.href='../pages/reconciliamento.html'">Reconciliamento em Tempo Real</div>
+                    <div class="submenu-item" onclick="window.location.href='../pages/reconciliamento-erp.html'">Reconciliamento com ERP</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='relatorios.html'">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='analise-financeira.html'">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analise Financeira</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='../configuracoes.html'">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-greeting">
+                    <h1>Empresas Cadastradas</h1>
+                    <p>Gerencie todas as empresas do sistema</p>
+                </div>
+                <div class="user-actions">
+                    <div class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="user-profile">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Conteúdo -->
+            <main class="content">
+                <div class="page-header">
+                    <h1>Lista de Empresas</h1>
+                    <button class="add-company-btn" onclick="window.location.href='cadastroempresas.html'">
+                        <i class="fas fa-plus"></i>
+                        Nova Empresa
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-section">
+                    <div class="filters-grid">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Buscar por nome ou NIF...">
+                        </div>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">Todos os status</option>
+                            <option value="active">Ativas</option>
+                            <option value="inactive">Inativas</option>
+                        </select>
+                        <select class="filter-select" id="sortBy">
+                            <option value="name">Ordenar por nome</option>
+                            <option value="recent">Mais recentes</option>
+                            <option value="oldest">Mais antigas</option>
+                        </select>
+                        <button class="apply-filters" onclick="applyFilters()">
+                            Aplicar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grid de Empresas -->
+                <div class="companies-grid" id="companiesGrid">
+                    <!-- As empresas serão carregadas aqui via JavaScript -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Dados de exemplo (substituir por dados do backend)
+        const companiesData = [
+            {
+                id: 1,
+                name: "Tech Solutions Angola",
+                nif: "500123456LA048",
+                status: "active",
+                bankAccounts: [
+                    { accountNumber: "000123456789", iban: "AO06005500001234567890133" },
+                    { accountNumber: "000987654321", iban: "AO06005500009876543210144" }
+                ],
+                createdAt: "2024-01-15"
+            },
+            {
+                id: 2,
+                name: "Comércio Geral BAI",
+                nif: "500987654LA021",
+                status: "active",
+                bankAccounts: [
+                    { accountNumber: "000555444333", iban: "AO06005500005554443330155" }
+                ],
+                createdAt: "2024-02-20"
+            },
+            {
+                id: 3,
+                name: "Indústria Moderna SA",
+                nif: "500456789LA033",
+                status: "inactive",
+                bankAccounts: [
+                    { accountNumber: "000111222333", iban: "AO06005500001112223330166" },
+                    { accountNumber: "000444555666", iban: "AO06005500004445556660177" },
+                    { accountNumber: "000777888999", iban: "AO06005500007778889990188" }
+                ],
+                createdAt: "2024-03-10"
+            },
+            {
+                id: 4,
+                name: "Serviços Financeiros",
+                nif: "500321654LA015",
+                status: "active",
+                bankAccounts: [
+                    { accountNumber: "000999888777", iban: "AO06005500009998887770199" }
+                ],
+                createdAt: "2024-04-05"
+            }
+        ];
+
+        // Menu Mobile
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const companiesMenu = document.getElementById('companiesMenu');
+        const companiesSubmenu = document.getElementById('companiesSubmenu');
+        const reconciliationMenu = document.getElementById('reconciliationMenu');
+        const reconciliationSubmenu = document.getElementById('reconciliationSubmenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        companiesMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            companiesSubmenu.classList.toggle('show');
+        });
+
+        // Submenu de Reconciliação
+        reconciliationMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            reconciliationSubmenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && !sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Renderizar empresas
+        function renderCompanies(companies) {
+            const grid = document.getElementById('companiesGrid');
+            grid.innerHTML = '';
+
+            if (companies.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #666;">
+                        <i class="fas fa-building" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <h3>Nenhuma empresa encontrada</h3>
+                        <p>Tente ajustar os filtros de busca</p>
+                    </div>
+                `;
+                return;
+            }
+
+            companies.forEach(company => {
+                const companyCard = document.createElement('div');
+                companyCard.className = 'company-card';
+                companyCard.innerHTML = `
+                    <div class="company-status ${company.status === 'active' ? 'status-active' : 'status-inactive'}">
+                        ${company.status === 'active' ? 'Ativa' : 'Inativa'}
+                    </div>
+                    <div class="company-header">
+                        <div class="company-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="company-info">
+                            <div class="company-name">${company.name}</div>
+                            <div class="company-nif">NIF: ${company.nif}</div>
+                        </div>
+                        <div class="company-actions">
+                            <button class="action-btn" onclick="editCompany(${company.id})" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn" onclick="viewCompany(${company.id})" title="Ver detalhes">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn" onclick="deleteCompany(${company.id})" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bank-accounts">
+                        <div class="bank-accounts-title">
+                            <i class="fas fa-university"></i>
+                            Contas Bancárias (${company.bankAccounts.length})
+                        </div>
+                        ${company.bankAccounts.map(account => `
+                            <div class="account-item">
+                                <div>
+                                    <div class="account-number">${account.accountNumber}</div>
+                                    <div class="account-iban">${account.iban}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                grid.appendChild(companyCard);
+            });
+        }
+
+        // Filtros
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            let filteredCompanies = companiesData.filter(company => {
+                const matchesSearch = company.name.toLowerCase().includes(searchTerm) || 
+                                    company.nif.toLowerCase().includes(searchTerm);
+                const matchesStatus = !statusFilter || company.status === statusFilter;
+                return matchesSearch && matchesStatus;
+            });
+
+            // Ordenação
+            filteredCompanies.sort((a, b) => {
+                if (sortBy === 'name') {
+                    return a.name.localeCompare(b.name);
+                } else if (sortBy === 'recent') {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                } else if (sortBy === 'oldest') {
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                }
+                return 0;
+            });
+
+            renderCompanies(filteredCompanies);
+        }
+
+        // Ações das empresas
+        function editCompany(id) {
+            alert(`Editar empresa ID: ${id}`);
+            // window.location.href = `editar-empresa.html?id=${id}`;
+        }
+
+        function viewCompany(id) {
+            alert(`Ver detalhes da empresa ID: ${id}`);
+            // window.location.href = `detalhes-empresa.html?id=${id}`;
+        }
+
+        function deleteCompany(id) {
+            if (confirm('Tem certeza que deseja excluir esta empresa?')) {
+                alert(`Empresa ID: ${id} excluída`);
+                // Implementar lógica de exclusão
+            }
+        }
+
+        // Busca em tempo real
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.getElementById('statusFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortBy').addEventListener('change', applyFilters);
+
+        // Carregar empresas ao iniciar
+        renderCompanies(companiesData);
+    </script>
+</body>
+</html>

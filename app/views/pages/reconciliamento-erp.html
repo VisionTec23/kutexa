@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kutexa - Reconciliação com ERP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #14532D;
+            --accent: #C8A951;
+            --light: #F4F1EC;
+            --white: #FFFFFF;
+            --dark-bg: #0A2918;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--white);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Layout Principal */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--primary) 100%);
+            color: var(--white);
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(200, 169, 81, 0.3);
+        }
+
+        .sidebar-header h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .sidebar-menu {
+            padding: 1.5rem 0;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: rgba(200, 169, 81, 0.15);
+            border-left-color: var(--accent);
+        }
+
+        .menu-item i {
+            width: 20px;
+            margin-right: 10px;
+            color: var(--accent);
+        }
+
+        .submenu {
+            background: rgba(0, 0, 0, 0.2);
+            margin-left: 1.5rem;
+            border-radius: 5px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+        }
+
+        .submenu.show {
+            max-height: 200px;
+        }
+
+        .submenu-item {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .submenu-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        /* Conteúdo Principal */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            height: var(--header-height);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .user-greeting h1 {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .user-greeting p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-btn, .user-profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .notification-btn:hover, .user-profile:hover {
+            background: var(--accent);
+            color: var(--white);
+        }
+
+        /* Conteúdo */
+        .content {
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        /* Configuração ERP */
+        .erp-config-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light);
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .config-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark-bg) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .config-header h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .form-input, .form-select {
+            padding: 0.8rem;
+            border: 1px solid var(--light);
+            border-radius: 8px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(200, 169, 81, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .test-connection-btn {
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .test-connection-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(200, 169, 81, 0.3);
+        }
+
+        .connection-status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .connection-status.success {
+            background: rgba(20, 83, 45, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            display: block;
+        }
+
+        .connection-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: 1px solid #EF4444;
+            display: block;
+        }
+
+        /* Período de Extração */
+        .period-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light);
+        }
+
+        .period-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Área de Upload */
+        .upload-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .upload-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .upload-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark-bg) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+
+        .upload-header h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(200, 169, 81, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: rgba(244, 241, 236, 0.1);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(200, 169, 81, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent);
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        .upload-icon-large {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .upload-text p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-types {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .file-type-tag {
+            background: rgba(20, 83, 45, 0.1);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .upload-btn {
+            background: var(--accent);
+            color: var(--primary);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(200, 169, 81, 0.3);
+        }
+
+        /* Lista de Arquivos */
+        .files-list {
+            margin-top: 1.5rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            background: rgba(200, 169, 81, 0.1);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .file-size {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .file-action-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+        }
+
+        .file-action-btn:hover {
+            color: var(--accent);
+        }
+
+        /* Botão de Processar */
+        .process-section {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .process-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark-bg) 100%);
+            color: var(--white);
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(20, 83, 45, 0.3);
+        }
+
+        .process-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(20, 83, 45, 0.4);
+        }
+
+        .process-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Menu Mobile */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 0 1rem;
+            }
+
+            .upload-card, .erp-config-section, .period-section {
+                padding: 1.5rem;
+            }
+
+            .upload-area {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-greeting h1 {
+                font-size: 1.1rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .upload-header, .config-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+
+            .period-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>Kutexa</h2>
+            </div>
+            <nav class="sidebar-menu">
+                <div class="menu-item" onclick="window.location.href='dashboard.html'">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </div>
+                <div class="menu-item" id="companiesMenu">
+                    <i class="fas fa-building"></i>
+                    <span>Empresas</span>
+                    <i class="fas fa-chevron-down" style="float: right; font-size: 0.8rem;"></i>
+                </div>
+                <div class="submenu" id="companiesSubmenu">
+                    <div class="submenu-item" onclick="window.location.href='cadastrar-empresa.html'">Cadastrar Empresa</div>
+                    <div class="submenu-item" onclick="window.location.href='ver-empresas.html'">Ver Empresas</div>
+                </div>
+                <div class="menu-item active" id="reconciliationMenu">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Reconciliamento</span>
+                    <i class="fas fa-chevron-down" style="float: right; font-size: 0.8rem;"></i>
+                </div>
+                <div class="submenu" id="reconciliationSubmenu">
+                    <div class="submenu-item" onclick="window.location.href='reconciliamento.html'">Reconciliamento em Tempo Real</div>
+                    <div class="submenu-item active" onclick="window.location.href='reconciliamento-erp.html'">Reconciliamento com ERP</div>
+                </div>
+                <div class="menu-item" onclick="window.location.href='relatorios.html'">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='analise-financeira.html'">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analise Financeira</span>
+                </div>
+                <div class="menu-item" onclick="window.location.href='configuracoes.html'">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="user-greeting">
+                    <h1>Reconciliação com ERP</h1>
+                    <p>Integre com seu sistema ERP para reconciliação automática</p>
+                </div>
+                <div class="user-actions">
+                    <div class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div class="user-profile">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Conteúdo -->
+            <main class="content">
+                <div class="page-header">
+                    <h1>Integração com ERP</h1>
+                    <p>Configure a integração com seu sistema ERP e faça upload dos arquivos</p>
+                </div>
+
+                <!-- Configuração ERP -->
+                <section class="erp-config-section">
+                    <div class="config-header">
+                        <div class="config-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h3>Configuração da Integração ERP</h3>
+                    </div>
+                    
+                    <div class="config-grid">
+                        <div class="form-group">
+                            <label class="form-label">Sistema ERP</label>
+                            <select class="form-select" id="erpSystem">
+                                <option value="">Selecione o ERP</option>
+                                <option value="sap">SAP</option>
+                                <option value="oracle">Oracle ERP</option>
+                                <option value="dynamics">Microsoft Dynamics</option>
+                                <option value="totvs">TOTVS</option>
+                                <option value="other">Outro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">URL da API</label>
+                            <input type="url" class="form-input" id="apiUrl" placeholder="https://api.seuerp.com/v1">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Chave da API</label>
+                            <input type="password" class="form-input" id="apiKey" placeholder="Insira sua chave da API">
+                        </div>
+                    </div>
+
+                    <div class="config-grid">
+                        <div class="form-group">
+                            <label class="form-label">Endpoint de Faturas</label>
+                            <input type="text" class="form-input" id="invoicesEndpoint" placeholder="/api/invoices">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Endpoint de Transações</label>
+                            <input type="text" class="form-input" id="transactionsEndpoint" placeholder="/api/transactions">
+                        </div>
+                    </div>
+
+                    <button class="test-connection-btn" onclick="testConnection()">
+                        <i class="fas fa-bolt"></i>
+                        Testar Conexão
+                    </button>
+
+                    <div class="connection-status" id="connectionStatus"></div>
+                </section>
+
+                <!-- Período de Extração -->
+                <section class="period-section">
+                    <div class="config-header">
+                        <div class="config-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h3>Período de Extração</h3>
+                    </div>
+                    
+                    <div class="period-grid">
+                        <div class="form-group">
+                            <label class="form-label">Data Inicial</label>
+                            <input type="date" class="form-input" id="startDate">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Data Final</label>
+                            <input type="date" class="form-input" id="endDate">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Área de Upload -->
+                <div class="upload-section">
+                    <!-- Upload de Extrato Bancário -->
+                    <div class="upload-card">
+                        <div class="upload-header">
+                            <div class="upload-icon">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                            <h3>Extrato Bancário</h3>
+                        </div>
+                        <div class="upload-area" id="bankStatementArea">
+                            <div class="upload-icon-large">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="upload-text">
+                                <h4>Upload do Extrato</h4>
+                                <p>Arraste ou clique para fazer upload</p>
+                                <div class="file-types">
+                                    <span class="file-type-tag">PDF</span>
+                                    <span class="file-type-tag">XLSX</span>
+                                    <span class="file-type-tag">CSV</span>
+                                </div>
+                            </div>
+                            <input type="file" id="extratos" accept=".pdf,.xlsx,.csv" style="display: none;">
+                            <button class="upload-btn" onclick="document.getElementById('extratos').click()">
+                                Selecionar Arquivo
+                            </button>
+                        </div>
+                        <div class="files-list" id="bankStatementFiles"></div>
+                    </div>
+
+                    <!-- Upload de Faturas (Opcional com ERP) -->
+                    <div class="upload-card">
+                        <div class="upload-header">
+                            <div class="upload-icon">
+                                <i class="fas fa-receipt"></i>
+                            </div>
+                            <h3>Faturas (Opcional)</h3>
+                        </div>
+                        <div class="upload-area" id="invoicesArea">
+                            <div class="upload-icon-large">
+                                <i class="fas fa-file-upload"></i>
+                            </div>
+                            <div class="upload-text">
+                                <h4>Upload de Faturas</h4>
+                                <p>Arraste ou clique para fazer upload (múltiplos)</p>
+                                <p style="font-size: 0.8rem; color: var(--accent); margin-bottom: 0.5rem;">
+                                    <i class="fas fa-info-circle"></i> Opcional quando usando integração ERP
+                                </p>
+                                <div class="file-types">
+                                    <span class="file-type-tag">PDF</span>
+                                    <span class="file-type-tag">XLSX</span>
+                                    <span class="file-type-tag">JPG</span>
+                                    <span class="file-type-tag">PNG</span>
+                                </div>
+                            </div>
+                            <input type="file" id="faturas" accept=".pdf,.xlsx,.jpg,.jpeg,.png" multiple style="display: none;">
+                            <button class="upload-btn" onclick="document.getElementById('faturas').click()">
+                                Selecionar Arquivos
+                            </button>
+                        </div>
+                        <div class="files-list" id="invoicesFiles"></div>
+                    </div>
+                </div>
+
+                <!-- Botão de Processar -->
+                <div class="process-section">
+                    <button class="process-btn" id="processBtn" onclick="processReconciliation()" disabled>
+                        <i class="fas fa-sync-alt"></i> Iniciar Reconciliação com ERP
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Menu Mobile
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const companiesMenu = document.getElementById('companiesMenu');
+        const companiesSubmenu = document.getElementById('companiesSubmenu');
+        const reconciliationMenu = document.getElementById('reconciliationMenu');
+        const reconciliationSubmenu = document.getElementById('reconciliationSubmenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        // Submenu de Empresas
+        companiesMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            companiesSubmenu.classList.toggle('show');
+        });
+
+        // Submenu de Reconciliação
+        reconciliationMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            reconciliationSubmenu.classList.toggle('show');
+        });
+
+        // Fechar menu ao clicar fora (mobile)
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 1024 && !sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Logout
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Testar Conexão
+        function testConnection() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const statusDiv = document.getElementById('connectionStatus');
+
+            if (!apiUrl || !apiKey) {
+                statusDiv.className = 'connection-status error';
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Preencha a URL e a Chave da API';
+                return;
+            }
+
+            statusDiv.className = 'connection-status';
+            statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testando conexão...';
+
+            // Simular teste de conexão
+            setTimeout(() => {
+                statusDiv.className = 'connection-status success';
+                statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Conexão estabelecida com sucesso!';
+                checkProcessButton();
+            }, 2000);
+        }
+
+        // Upload de Arquivos
+        const extratos = document.getElementById('extratos');
+        const faturas = document.getElementById('faturas');
+        const processBtn = document.getElementById('processBtn');
+
+        let bankStatementFile = null;
+        let invoiceFiles = [];
+
+        // Extrato Bancário
+        extratos.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                bankStatementFile = this.files[0];
+                displayBankStatementFile(bankStatementFile);
+                checkProcessButton();
+            }
+        });
+
+        // Faturas
+        faturas.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                invoiceFiles = Array.from(this.files);
+                displayInvoiceFiles(invoiceFiles);
+                checkProcessButton();
+            }
+        });
+
+        // Drag and Drop
+        function setupDragAndDrop() {
+            const areas = ['bankStatementArea', 'invoicesArea'];
+            
+            areas.forEach(areaId => {
+                const area = document.getElementById(areaId);
+                
+                area.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragover');
+                });
+                
+                area.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                });
+                
+                area.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        if (areaId === 'bankStatementArea') {
+                            bankStatementFile = files[0];
+                            extratos.files = files;
+                            displayBankStatementFile(bankStatementFile);
+                        } else {
+                            invoiceFiles = Array.from(files);
+                            faturas.files = files;
+                            displayInvoiceFiles(invoiceFiles);
+                        }
+                        checkProcessButton();
+                    }
+                });
+            });
+        }
+
+        // Display files
+        function displayBankStatementFile(file) {
+            const container = document.getElementById('bankStatementFiles');
+            container.innerHTML = `
+                <div class="file-item">
+                    <div class="file-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${formatFileSize(file.size)}</div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="file-action-btn" onclick="removeBankStatement()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayInvoiceFiles(files) {
+            const container = document.getElementById('invoicesFiles');
+            container.innerHTML = '';
+            
+            files.forEach((file, index) => {
+                const fileElement = document.createElement('div');
+                fileElement.className = 'file-item';
+                fileElement.innerHTML = `
+                    <div class="file-icon">
+                        <i class="fas ${getFileIcon(file.name)}"></i>
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${formatFileSize(file.size)}</div>
+                    </div>
+                    <div class="file-actions">
+                        <button class="file-action-btn" onclick="removeInvoice(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(fileElement);
+            });
+        }
+
+        // Helper functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            if (['pdf'].includes(ext)) return 'fa-file-pdf';
+            if (['xlsx', 'xls', 'csv'].includes(ext)) return 'fa-file-excel';
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) return 'fa-file-image';
+            return 'fa-file';
+        }
+
+        // Remove files
+        function removeBankStatement() {
+            bankStatementFile = null;
+            extratos.value = '';
+            document.getElementById('bankStatementFiles').innerHTML = '';
+            checkProcessButton();
+        }
+
+        function removeInvoice(index) {
+            invoiceFiles.splice(index, 1);
+            displayInvoiceFiles(invoiceFiles);
+            checkProcessButton();
+        }
+
+        // Check if process button should be enabled
+        function checkProcessButton() {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            const hasValidConfig = apiUrl && apiKey && startDate && endDate;
+            const hasBankStatement = bankStatementFile !== null;
+            
+            processBtn.disabled = !(hasValidConfig && hasBankStatement);
+        }
+
+        // Process reconciliation
+        function processReconciliation() {
+            if (!bankStatementFile) return;
+            
+            const apiUrl = document.getElementById('apiUrl').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            processBtn.disabled = true;
+            processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando com ERP...';
+            
+            // Simulate processing with ERP integration
+            setTimeout(() => {
+                alert('✅ Reconciliação com ERP concluída com sucesso!');
+                processBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Iniciar Reconciliação com ERP';
+                processBtn.disabled = false;
+                
+                // Reset files
+                removeBankStatement();
+                invoiceFiles = [];
+                document.getElementById('invoicesFiles').innerHTML = '';
+                faturas.value = '';
+            }, 4000);
+        }
+
+        // Event listeners for form validation
+        document.getElementById('apiUrl').addEventListener('input', checkProcessButton);
+        document.getElementById('apiKey').addEventListener('input', checkProcessButton);
+        document.getElementById('startDate').addEventListener('change', checkProcessButton);
+        document.getElementById('endDate').addEventListener('change', checkProcessButton);
+
+        // Initialize drag and drop
+        setupDragAndDrop();
+    </script>
+</body>
+</html>
