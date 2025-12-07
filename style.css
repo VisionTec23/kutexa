@@ -849,8 +849,7 @@ body::before {
 }
 
 .pricing-quantum.featured::before {
-    content: 'QUANTUM';
-    position: absolute;
+     position: absolute;
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
