@@ -1,11 +1,393 @@
- <!DOCTYPE html>
- <html lang="en">
- <head>
+<!DOCTYPE html>
+<html lang="pt" class="neo-theme">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
- </head>
- <body>
+    <title>KUTEXA | Reconciliação Bancária </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Quantum Grid Background -->
+    <div class="quantum-grid"></div>
     
- </body>
- </html>
+    <!-- Neon Cursor -->
+    <div class="neon-cursor" id="neonCursor"></div>
+
+    <!-- Cyber Header -->
+    <header class="cyber-header">
+        <div class="header-grid">
+            <div class="cyber-logo">
+                <div class="logo-text">KUTEXA</div>
+            </div>
+            
+            <nav class="cyber-nav">
+                <a href="#quantum-hero" class="nav-link active">Início</a>
+                <a href="#quantum-mission" class="nav-link">Missão</a>
+                <a href="#quantum-features" class="nav-link">Recursos</a>
+                <a href="#quantum-pricing" class="nav-link">Planos</a>
+                <a href="#quantum-contact" class="nav-link">Contacto</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button class="cyber-button">
+                    <span>ACESSO</span>
+                    <i class="fas fa-terminal"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quantum Hero -->
+    <section class="quantum-hero" id="quantum-hero">
+        <div class="hero-orbit">
+            <div class="orbital-ring"></div>
+            <div class="orbital-ring"></div>
+        </div>
+        
+        <div class="hero-container">
+            <div class="hero-content">
+                 <h1 class="hero-title">Reconciliação Bancária Inteligente</h1>
+                <p class="hero-description">
+                   Simplifique sua gestão financeira com o Kutexa. Automatize processos, elimine erros e ganhe controle total sobre suas transações bancárias com tecnologia de ponta.
+                </p>
+                
+                <div class="hero-stats">
+                    <div class="stat-orb">
+                        <div class="stat-value" data-target="99.9">99</div>
+                        <div class="stat-label">Precisão</div>
+                    </div>
+                    <div class="stat-orb">
+                        <div class="stat-value">40h</div>
+                        <div class="stat-label">Economizadas</div>
+                    </div>
+                    <div class="stat-orb">
+                        <div class="stat-value" data-target="98.7">99</div>
+                        <div class="stat-label">Eficiência</div>
+                    </div>
+                </div>
+                
+                <button class="cyber-button" style="margin-top: var(--space-xl); padding: 16px 32px;">
+                    <span>INICIAR DEMONSTRAÇÃO</span>
+                    <i class="fas fa-rocket"></i>
+                </button>
+            </div>
+            
+            <div class="holo-dashboard">
+                <div class="dashboard-frame">
+                    <div class="dashboard-header">
+                        <div class="dashboard-title">SISTEMA NEURAL</div>
+                        <div class="dashboard-status">
+                            <span style="color: var(--neo-primary); font-family: var(--font-mono);">
+                                <i class="fas fa-circle" style="font-size: 0.8em; margin-right: 8px;"></i>
+                                ONLINE
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-widget">
+                            <div class="widget-header">
+                                <div class="widget-title">RECONCILIAÇÃO</div>
+                                <div class="widget-value">98.7%</div>
+                            </div>
+                            <div class="widget-progress" style="--progress: 98.7%"></div>
+                        </div>
+                        
+                        <div class="dashboard-widget">
+                            <div class="widget-header">
+                                <div class="widget-title">TEMPO ECONOMIZADO</div>
+                                <div class="widget-value">15h/mês</div>
+                            </div>
+                            <div class="widget-progress" style="--progress: 85%"></div>
+                        </div>
+                        
+                        <div class="dashboard-widget">
+                            <div class="widget-header">
+                                <div class="widget-title">PRECISÃO</div>
+                                <div class="widget-value">99.9%</div>
+                            </div>
+                            <div class="widget-progress" style="--progress: 99.9%"></div>
+                        </div>
+                        
+                        <!-- <div class="dashboard-widget">
+                            <div class="widget-header">
+                                <div class="widget-title">Transações Reconciliadas</div>
+                                <div class="widget-progress" style="--progress: 99.9%"></div>
+                            </div>
+                            <div class="widget-progress" style="--progress: 100%"></div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <section class="quantum-section quantum-missions" id="quantum-mission">
+        <div class="section-header">
+         
+            <h2 class="section-title">Missão & Visão</h2>
+            <p class="section-subtitle">
+                Transformamos dados financeiros em insights estratégicos através 
+                de tecnologia neural avançada.
+            </p>
+        </div>
+        
+        <div class="mission-matrix">
+            <div class="mission-core">
+                <h3 class="mission-title">Missão</h3>
+                <p class="mission-text">
+                    Transformar a reconciliação bancária em um processo simples, rápido e confiável, 
+                    permitindo que empresas foquem no que realmente importa: seu crescimento e 
+                    sucesso sustentável no mercado angolano e além.
+                </p>
+            </div>
+            
+            <div class="mission-core">
+                <h3 class="mission-title">Visão</h3>
+                <p class="mission-text">
+                    Ser a plataforma líder em soluções de reconciliação bancária em Angola e África, 
+                    reconhecida pela excelência tecnológica, inovação contínua e compromisso 
+                    inabalável com a satisfação dos nossos clientes.
+                </p>
+            </div>
+        </div>
+    </section>
+    <section class="quantum-section" id="quantum-features">
+        <div class="section-header">
+             <h2 class="section-title">Por que Kutexa?</h2>
+            <p class="section-subtitle">
+                Tecnologia quântica aplicada à reconciliação bancária
+            </p>
+        </div>
+        
+        <div class="quantum-features">
+        
+
+            
+            <div class="feature-neuron">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="feature-title">Segurança </h3>
+                <p class="feature-description">
+                   Criptografia de nível bancário e conformidade com padrões internacionais de segurança
+                </p>
+            </div>
+            
+            <div class="feature-neuron">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3 class="feature-title">Automação Total</h3>
+                <p class="feature-description">
+                   Elimine tarefas manuais e economize até 90% do tempo gasto em reconciliação bancária.
+                </p>
+            </div>
+            
+            <div class="feature-neuron">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3 class="feature-title">IA Generativa</h3>
+                <p class="feature-description">
+                    Machine learning generativo que aprende e se adapta aos seus padrões 
+                    únicos de transação em tempo real.
+                </p>
+            </div>
+            
+           
+        </div>
+    </section>
+
+ 
+    <section class="quantum-section quantum-pricing" id="quantum-pricing">
+        <div class="section-header">
+            
+            <h2 class="section-title">Escolha Sua Dimensão</h2>
+            <p class="section-subtitle">
+                Selecione o plano que se alinha com suas necessidades dimensionais
+            </p>
+        </div>
+        
+        <div class="pricing-grid-neo">
+            <div class="pricing-quantum">
+                <div class="pricing-header">
+                    <h3 class="pricing-name">PLATINA</h3>
+                    <div class="pricing-amount">4.500</div>
+                    <div class="pricing-period">Kz / mês</div>
+                </div>
+                
+                <ul class="pricing-features-neo">
+                    <li>Até 500 transações/mês</li>
+                    <li>1 conta bancária</li>
+                    <li>Relatórios básicos</li>
+                    <li>Suporte por email</li>
+                    <li>Integração com 1 banco</li>
+                </ul>
+                
+                <button class="cyber-button" style="width: 100%;">
+                    <span>ASSINAR AGORA</span>
+                </button>
+            </div>
+            
+            <div class="pricing-quantum featured">
+                <div class="pricing-header">
+                    <h3 class="pricing-name">SAFIRA</h3>
+                    <div class="pricing-amount">12.000</div>
+                    <div class="pricing-period">Kz / mês</div>
+                </div>
+                
+                <ul class="pricing-features-neo">
+                    <li>Até 5.000 transações/mês</li>
+                    <li>5 contas bancárias</li>
+                    <li>Relatórios avançados</li>
+                    <li>Suporte prioritário</li>
+                    <li>Integração ilimitada</li>
+                    <li>API access</li>
+                    <li>Análise com IA</li>
+                </ul>
+                
+                <button class="cyber-button" style="width: 100%; background: var(--gradient-neo);">
+                    <span>ASSINAR AGORA</span>
+                </button>
+            </div>
+            
+            <div class="pricing-quantum">
+                <div class="pricing-header">
+                    <h3 class="pricing-name">DIAMANTE</h3>
+                    <div class="pricing-amount">17.500</div>
+                    <div class="pricing-period">Kz / mês</div>
+                </div>
+                
+                <ul class="pricing-features-neo">
+                    <li>Transações ilimitadas</li>
+                    <li>Contas ilimitadas</li>
+                    <li>Relatórios personalizados</li>
+                    <li>Suporte 24/7 dedicado</li>
+                    <li>Integração completa</li>
+                    <li>API Premium</li>
+                    <li>Consultoria estratégica</li>
+                    <li>Treinamento da equipe</li>
+                </ul>
+                
+                <button class="cyber-button" style="width: 100%;">
+                    <span>ASSINAR AGORA</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quantum Contact -->
+    <section class="quantum-section quantum-contact" id="quantum-contact">
+        <div class="section-header">
+             <h2 class="section-title">Entre em Contacto</h2>
+            <p class="section-subtitle">
+                Estabeleça uma conexão neural com nossa equipe
+            </p>
+        </div>
+        
+        <div class="contact-grid">
+            <div class="contact-hologram">
+                <div class="hologram-sphere">
+                    <div class="sphere-inner"></div>
+                </div>
+            </div>
+            
+            <div class="contact-form-neo">
+                <div class="form-group-neo">
+                    <label class="form-label-neo">Nome Completo</label>
+                    <input type="text" class="form-input-neo" placeholder="Seu nome">
+                </div>
+                
+                <div class="form-group-neo">
+                    <label class="form-label-neo">Email</label>
+                    <input type="email" class="form-input-neo" placeholder="seu@email.com">
+                </div>
+                
+                <div class="form-group-neo">
+                    <label class="form-label-neo">Telefone</label>
+                    <input type="tel" class="form-input-neo" placeholder="+244 923 456 789">
+                </div>
+                
+                <div class="form-group-neo">
+                    <label class="form-label-neo">Empresa</label>
+                    <input type="text" class="form-input-neo" placeholder="Nome da sua empresa">
+                </div>
+                
+                <div class="form-group-neo">
+                    <label class="form-label-neo">Mensagem</label>
+                    <textarea class="form-input-neo" rows="5" placeholder="Como podemos ajudar?"></textarea>
+                </div>
+                
+                <button class="cyber-button" style="width: 100%; padding: 18px;">
+                    <span>ENVIAR MENSAGEM</span>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quantum Footer -->
+    <footer class="quantum-footer">
+        <div class="footer-grid">
+            <div class="footer-core">
+                <h3 class="footer-title">KUTEXA</h3>
+                <p class="footer-description">
+                    Reconciliação bancária neural para empresas do futuro. 
+                    Transformamos dados financeiros em vantagem competitiva através 
+                    de tecnologia quântica aplicada.
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-links-title">Produto</h4>
+                <ul class="footer-links-list">
+                    <li><a href="#quantum-features">Recursos</a></li>
+                    <li><a href="#quantum-pricing">Planos</a></li>
+                    <li><a href="#">API</a></li>
+                    <li><a href="#">Documentação</a></li>
+                    <li><a href="#">Atualizações</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-links-title">Empresa</h4>
+                <ul class="footer-links-list">
+                    <li><a href="#quantum-mission">Sobre</a></li>
+                    <li><a href="#">Carreiras</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Parceiros</a></li>
+                    <li><a href="#">Imprensa</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4 class="footer-links-title">Contactos</h4>
+                <ul class="footer-links-list">
+                    <li><a href="mailto:contato@kutexa.ao">contato@kutexa.ao</a></li>
+                    <li><a href="tel:+244975347393">+244 975 347 393</a></li>
+                    <li><a href="#">Luanda, Angola</a></li>
+                    <li><a href="#">Segunda a Sexta</a></li>
+                    <li><a href="#">09:00 - 18:00</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-copyright">
+                &copy; 2025 KUTEXA. Todos os direitos reservados.
+            </div>
+            
+            <div class="footer-legal">
+                <a href="#">Termos de Uso</a>
+                <a href="#">Política de Privacidade</a>
+                <a href="#">Cookies</a>
+            </div>
+        </div>
+    </footer>
+
+<script src="script.js"></script>
+</body>
+</html>
