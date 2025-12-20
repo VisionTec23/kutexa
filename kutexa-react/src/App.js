@@ -4,8 +4,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DashboardPage from "./pages/DashboardPage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
+import ReconciliationPage from "./pages/ReconciliationPage";
 import SignupPage from "./pages/SignupPage";
- 
 function App() {
   return (
     <BrowserRouter>
@@ -14,6 +14,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={< DashboardPage/>} />
+        <Route path="/reconciliation" element={< ReconciliationPage/>} />
       </Routes>
     </BrowserRouter>
   );

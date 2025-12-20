@@ -1,0 +1,29 @@
+import { useState } from 'react';
+import Header from '../components/dashboard/Header';
+import Sidebar from '../components/dashboard/Sidebar';
+import '../styles/dashboard.css';
+
+export default function DashboardLayout({ children, userName: initialName, onLogout }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState(initialName || 'Usuário');
+
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const handleLogout = () => { if (window.confirm('Tem certeza que deseja sair?')) onLogout(); };
+
+  return (
+    <div className="dashboard-container">
+       {sidebarOpen && <div className="menu-overlay active" onClick={() => setSidebarOpen(false)} />}
+
+     
+      <Sidebar isOpen={sidebarOpen} onLogout={handleLogout} />
+
+       <div className="main-content">
+        <Header userName={userName} onMenuClick={toggleSidebar} />
+
+        <main className="content">
+           {children}
+        </main>
+      </div>
+    </div>
+  );
+}

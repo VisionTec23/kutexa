@@ -1,175 +1,228 @@
-import Chart from 'chart.js/auto';
-import { useEffect, useRef } from 'react';
+import { useRef, useState } from "react";
+import "../../styles/reconciliation.css"; // importe o CSS que você tinha
 
-function ReconciliationChart({ period }) {
-  const chartRef = useRef(null);
-  const chartInstance = useRef(null);
+export default function Reconciliation() {
+  const [bankStatementFile, setBankStatementFile] = useState(null);
+  const [invoiceFiles, setInvoiceFiles] = useState([]);
+  const [processing, setProcessing] = useState(false);
 
-  const chartColors = {
-    primary: '#14532D',
-    accent: '#C8A951',
-    light: '#F4F1EC',
-    success: '#10B981',
-    warning: '#F59E0B',
-    error: '#EF4444'
+  const extratosRef = useRef(null);
+  const faturasRef = useRef(null);
+
+  const processBtnRef = useRef(null);
+
+  // Helpers
+  const formatFileSize = (bytes) => {
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024;
+    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  const generateChartData = (period) => {
-    switch(period) {
-      case '7':
-        return {
-          labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-          datasets: [{
-            label: 'Reconciliações Concluídas',
-            data: [18, 22, 24, 20, 26, 15, 12],
-            borderColor: chartColors.primary,
-            backgroundColor: chartColors.primary + '20',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4
-          }, {
-            label: 'Reconciliações Pendentes',
-            data: [3, 5, 2, 4, 1, 6, 8],
-            borderColor: chartColors.accent,
-            backgroundColor: chartColors.accent + '20',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4
-          }]
-        };
-      case '30':
-        const monthlyLabels = Array.from({length: 30}, (_, i) => `Dia ${i + 1}`);
-        const monthlyData = Array.from({length: 30}, () => Math.floor(Math.random() * 30) + 10);
-        return {
-          labels: monthlyLabels,
-          datasets: [{
-            label: 'Reconciliações Diárias',
-            data: monthlyData,
-            borderColor: chartColors.primary,
-            backgroundColor: chartColors.primary + '20',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4
-          }]
-        };
-      case '90':
-        return {
-          labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-          datasets: [{
-            label: 'Reconciliações Mensais',
-            data: [450, 520, 480, 610, 580, 650, 720, 680, 750, 800, 780, 850],
-            borderColor: chartColors.primary,
-            backgroundColor: chartColors.primary + '20',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4
-          }]
-        };
-      default:
-        return {
-          labels: [],
-          datasets: []
-        };
+  const getFileIcon = (filename) => {
+    const ext = filename.split(".").pop().toLowerCase();
+    if (["pdf"].includes(ext)) return "fa-file-pdf";
+    if (["xlsx", "xls", "csv"].includes(ext)) return "fa-file-excel";
+    if (["jpg", "jpeg", "png", "gif"].includes(ext)) return "fa-file-image";
+    return "fa-file";
+  };
+
+  // Upload handlers
+  const handleBankStatementChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setBankStatementFile(file);
+  };
+
+  const handleInvoiceChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length) setInvoiceFiles(files);
+  };
+
+  // Drag-and-drop
+  const handleDrop = (e, type) => {
+    e.preventDefault();
+    const files = Array.from(e.dataTransfer.files);
+    if (!files.length) return;
+
+    if (type === "bank") {
+      setBankStatementFile(files[0]);
+      extratosRef.current.files = files;
+    } else {
+      setInvoiceFiles(files);
+      faturasRef.current.files = files;
     }
   };
 
-  useEffect(() => {
-    const ctx = chartRef.current?.getContext('2d');
-    
-    if (!ctx) return;
+  const handleDragOver = (e) => e.preventDefault();
 
-    // Destruir gráfico anterior se existir
-    if (chartInstance.current) {
-      chartInstance.current.destroy();
-    }
+  // Remove files
+  const removeBankStatement = () => {
+    setBankStatementFile(null);
+    extratosRef.current.value = "";
+  };
 
-    const chartConfig = {
-      type: 'line',
-      data: generateChartData(period),
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: {
-              color: '#333',
-              font: {
-                size: 12,
-                family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-              }
-            }
-          },
-          tooltip: {
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            titleColor: chartColors.primary,
-            bodyColor: '#333',
-            borderColor: chartColors.light,
-            borderWidth: 1,
-            cornerRadius: 8,
-            displayColors: true
-          }
-        },
-        scales: {
-          x: {
-            grid: {
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            ticks: {
-              color: '#666'
-            }
-          },
-          y: {
-            grid: {
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            ticks: {
-              color: '#666'
-            },
-            beginAtZero: period === '7'
-          }
-        },
-        interaction: {
-          intersect: false,
-          mode: 'index'
-        },
-        animations: {
-          tension: {
-            duration: 1000,
-            easing: 'linear'
-          }
-        }
-      }
-    };
+  const removeInvoice = (index) => {
+    const updated = [...invoiceFiles];
+    updated.splice(index, 1);
+    setInvoiceFiles(updated);
+  };
 
-    chartInstance.current = new Chart(ctx, chartConfig);
+  // Process reconciliation
+  const processReconciliation = () => {
+    if (!bankStatementFile || invoiceFiles.length === 0) return;
 
-    // Atualização automática dos dados (simulação)
-    const interval = setInterval(() => {
-      if (chartInstance.current) {
-        const newData = chartInstance.current.data.datasets[0].data.map(value => {
-          const variation = Math.random() * 4 - 2;
-          return Math.max(0, Math.round(value + variation));
-        });
-        
-        chartInstance.current.data.datasets[0].data = newData;
-        chartInstance.current.update('none');
-      }
-    }, 10000);
+    setProcessing(true);
 
-    return () => {
-      clearInterval(interval);
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-    };
-  }, [period]);
+    setTimeout(() => {
+      alert("✅ Reconciliação concluída com sucesso!");
+      setProcessing(false);
+      removeBankStatement();
+      setInvoiceFiles([]);
+    }, 3000);
+  };
 
   return (
-    <div className="chart-container">
-      <canvas ref={chartRef} id="reconciliationsChart"></canvas>
+    <div className="reconciliation-container">
+      <div className="page-header">
+        <h1>Processo de Reconciliação</h1>
+        <p>Envie o extrato bancário e as faturas para reconciliação automática</p>
+      </div>
+
+      <div className="upload-section">
+        {/* Extrato Bancário */}
+        <div className="upload-card">
+          <div className="upload-header">
+            <div className="upload-icon">
+              <i className="fas fa-file-invoice-dollar"></i>
+            </div>
+            <h3>Extrato Bancário</h3>
+          </div>
+          <div
+            className="upload-area"
+            onDrop={(e) => handleDrop(e, "bank")}
+            onDragOver={handleDragOver}
+          >
+            <div className="upload-icon-large">
+              <i className="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div className="upload-text">
+              <h4>Upload do Extrato Bancário</h4>
+              <p>Arraste ou clique para fazer upload</p>
+            </div>
+            <input
+              type="file"
+              ref={extratosRef}
+              accept=".pdf,.xlsx,.csv"
+              style={{ display: "none" }}
+              onChange={handleBankStatementChange}
+            />
+            <button
+              className="upload-btn"
+              onClick={() => extratosRef.current.click()}
+            >
+              Selecionar Arquivo
+            </button>
+            {bankStatementFile && (
+              <div className="files-list">
+                <div className="file-item">
+                  <div className="file-icon">
+                    <i className={`fas ${getFileIcon(bankStatementFile.name)}`}></i>
+                  </div>
+                  <div className="file-info">
+                    <div className="file-name">{bankStatementFile.name}</div>
+                    <div className="file-size">{formatFileSize(bankStatementFile.size)}</div>
+                  </div>
+                  <div className="file-actions">
+                    <button
+                      className="file-action-btn"
+                      onClick={removeBankStatement}
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Faturas */}
+        <div className="upload-card">
+          <div className="upload-header">
+            <div className="upload-icon">
+              <i className="fas fa-receipt"></i>
+            </div>
+            <h3>Faturas</h3>
+          </div>
+          <div
+            className="upload-area"
+            onDrop={(e) => handleDrop(e, "invoice")}
+            onDragOver={handleDragOver}
+          >
+            <div className="upload-icon-large">
+              <i className="fas fa-file-upload"></i>
+            </div>
+            <div className="upload-text">
+              <h4>Upload de Faturas de Extrato</h4>
+              <p>Arraste ou clique para fazer upload (múltiplos)</p>
+            </div>
+            <input
+              type="file"
+              ref={faturasRef}
+              multiple
+              accept=".pdf,.xlsx,.jpg,.jpeg,.png"
+              style={{ display: "none" }}
+              onChange={handleInvoiceChange}
+            />
+            <button
+              className="upload-btn"
+              onClick={() => faturasRef.current.click()}
+            >
+              Selecionar Arquivos
+            </button>
+            {invoiceFiles.length > 0 && (
+              <div className="files-list">
+                {invoiceFiles.map((file, index) => (
+                  <div className="file-item" key={index}>
+                    <div className="file-icon">
+                      <i className={`fas ${getFileIcon(file.name)}`}></i>
+                    </div>
+                    <div className="file-info">
+                      <div className="file-name">{file.name}</div>
+                      <div className="file-size">{formatFileSize(file.size)}</div>
+                    </div>
+                    <div className="file-actions">
+                      <button
+                        className="file-action-btn"
+                        onClick={() => removeInvoice(index)}
+                      >
+                        <i className="fas fa-times"></i>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Botão Processar */}
+      <div className="process-section">
+        <button
+          className="process-btn"
+          onClick={processReconciliation}
+          disabled={!bankStatementFile || invoiceFiles.length === 0 || processing}
+        >
+          {processing ? (
+            <i className="fas fa-spinner fa-spin"></i>
+          ) : (
+            <i className="fas fa-sync-alt"></i>
+          )}{" "}
+          {processing ? "Processando..." : "Iniciar Reconciliação"}
+        </button>
+      </div>
     </div>
   );
 }
-
-export default ReconciliationChart;
