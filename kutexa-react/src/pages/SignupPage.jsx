@@ -136,18 +136,17 @@ export default function SignupPage() {
           showNotification("Conta criada com sucesso! Redirecionando...", "success");
           localStorage.setItem('token', data.token);
           if (data.user) {
+            
             localStorage.setItem('user', JSON.stringify(data.user));
           }
-          
-          // Redirecionar após 2 segundos
+      
           setTimeout(() => {
             navigate('/dashboard');
           }, 2000);
         } else {
-          // Cadastro com verificação de email necessária
+         
           showNotification("Conta criada com sucesso! Verifique seu email para ativar sua conta.", "success");
-          
-          // Limpar formulário
+       
           setFormData({
             name: "",
             email: "",
@@ -160,7 +159,7 @@ export default function SignupPage() {
           setPasswordStrength(0);
         }
       } else {
-        // Tratar erros baseados no status code
+      
         switch (response.status) {
           case 400:
             if (data.errors) {
@@ -261,11 +260,11 @@ export default function SignupPage() {
   // Função para preencher com dados de teste
   const handleFillTestData = () => {
     const testData = {
-      name: "João Silva",
-      email: "joaos@teste.com",
+      name: "kutexa",
+      email: "teste@teste.com",
       password: "teste4123",
-      confirmPassword: "Teste@123",
-      phone: "+244 903 456 789",
+      confirmPassword: "teste4123",
+      phone: "+244 923 456 789",
       company: "Tech Solutions",
       acceptTerms: true
     };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -8,7 +8,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState(""); // "success", "error", "warning"
+  const [alertType, setAlertType] = useState("");  
 
   const navigate = useNavigate();
 
@@ -142,7 +142,7 @@ export default function LoginPage() {
   // Função para login de demonstração (teste rápido)
   const handleDemoLogin = () => {
     setEmail("teste@teste.com");
-    setPassword("11111111");
+    setPassword("teste4123");
     showNotification("Credenciais de teste preenchidas! Clique em Entrar.", "success");
   };
 
@@ -212,7 +212,8 @@ export default function LoginPage() {
               <input type="checkbox" />
               <span>Lembrar-me</span>
             </label>
-            <a href="#" className="forgot-link">Esqueceu a senha?</a>
+            <Link className="forgot-link" >Esqueceu a senha?</Link>
+  
           </div>
 
           <button 
@@ -247,7 +248,7 @@ export default function LoginPage() {
 
         <div className="login-footer">
           <span>Não tem uma conta?</span>
-          <a href="/signup" className="signup-link">Cadastre-se</a>
+          <Link to="/signup" className="signup-link">Cadastre-se</Link>
         </div>
       </div>
     </div>

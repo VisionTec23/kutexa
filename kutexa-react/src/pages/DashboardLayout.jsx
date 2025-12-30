@@ -13,8 +13,6 @@ export default function DashboardLayout({ children, userName: initialName, onLog
   return (
     <div className="dashboard-container">
        {sidebarOpen && <div className="menu-overlay active" onClick={() => setSidebarOpen(false)} />}
-
-     
       <Sidebar isOpen={sidebarOpen} onLogout={handleLogout} />
 
        <div className="main-content">

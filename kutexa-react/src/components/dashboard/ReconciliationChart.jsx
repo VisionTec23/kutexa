@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import "../../styles/reconciliation.css"; // importe o CSS que você tinha
+import "../../styles/reconciliation.css";
 
 export default function Reconciliation() {
   const [bankStatementFile, setBankStatementFile] = useState(null);
@@ -10,8 +10,7 @@ export default function Reconciliation() {
   const faturasRef = useRef(null);
 
   const processBtnRef = useRef(null);
-
-  // Helpers
+ 
   const formatFileSize = (bytes) => {
     if (bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -208,7 +207,7 @@ export default function Reconciliation() {
         </div>
       </div>
 
-      {/* Botão Processar */}
+  
       <div className="process-section">
         <button
           className="process-btn"
