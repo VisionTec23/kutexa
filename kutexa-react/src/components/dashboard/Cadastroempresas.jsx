@@ -1,19 +1,16 @@
 import { useState } from "react";
-import "../../styles/reconciliation.css"; // usando o mesmo CSS
+import "../../styles/reconciliation.css";
 
 export default function Cadastroempresas() {
   const [companyData, setCompanyData] = useState({
     name: "",
-    nif: ""
+    nif: "",
+    defaultCurrency: "AOA"
   });
 
-  const [bankAccounts, setBankAccounts] = useState([
-    { accountNumber: "", iban: "" }
-  ]);
-
   const [processing, setProcessing] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // Handlers para campos da empresa
   const handleCompanyChange = (e) => {
     const { name, value } = e.target;
     setCompanyData((prev) => ({
@@ -22,61 +19,99 @@ export default function Cadastroempresas() {
     }));
   };
 
-  const handleAccountChange = (index, field, value) => {
-    const updatedAccounts = [...bankAccounts];
-    updatedAccounts[index] = {
-      ...updatedAccounts[index],
-      [field]: value
-    };
-    setBankAccounts(updatedAccounts);
-  };
+  const validateCompanyForm = () => {
+    const newErrors = {};
 
-  const addAccount = () => {
-    if (bankAccounts.length < 5) {
-      setBankAccounts([...bankAccounts, { accountNumber: "", iban: "" }]);
+    if (!companyData.name.trim()) {
+      newErrors.name = "Nome da empresa é obrigatório";
+    } else if (companyData.name.length < 3) {
+      newErrors.name = "Nome muito curto (mínimo 3 caracteres)";
     }
-  };
 
-  const removeAccount = (index) => {
-    if (bankAccounts.length > 1) {
-      const updatedAccounts = bankAccounts.filter((_, i) => i !== index);
-      setBankAccounts(updatedAccounts);
+    if (!companyData.nif.trim()) {
+      newErrors.nif = "NIF é obrigatório";
+    } else if (!/^[0-9]{9,14}$/.test(companyData.nif)) {
+      newErrors.nif = "NIF inválido (apenas números)";
     }
+
+    return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!companyData.name || !companyData.nif) {
-      alert("Por favor, preencha o nome da empresa e o NIF");
-      return;
-    }
-
-    const invalidAccounts = bankAccounts.filter(
-      (acc) => !acc.accountNumber || !acc.iban
-    );
-
-    if (invalidAccounts.length > 0) {
-      alert("Por favor, preencha todos os campos das contas bancárias");
+    
+    const validationErrors = validateCompanyForm();
+    setErrors(validationErrors);
+    
+    if (Object.keys(validationErrors).length > 0) return;
+    
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      alert("Sessão expirada. Faça login novamente.");
       return;
     }
 
     setProcessing(true);
 
-    setTimeout(() => {
-      alert(`✅ Empresa "${companyData.name}" cadastrada com sucesso!`);
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/v1/companies/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            name: companyData.name,
+            nif: companyData.nif,
+            defaultCurrency: companyData.defaultCurrency,
+            bankAccounts: [] // Envia array vazio conforme a API espera
+          })
+        }
+      );
 
-      setCompanyData({ name: "", nif: "" });
-      setBankAccounts([{ accountNumber: "", iban: "" }]);
+      const data = await response.json();
+
+      if (response.status === 409) {
+        setErrors({ nif: "Já existe uma empresa com este NIF" });
+        alert("Empresa já cadastrada com este NIF");
+        return;
+      }
+
+      if (response.status === 401) {
+        alert("Não autorizado. Faça login novamente.");
+        return;
+      }
+
+      if (!response.ok) {
+        alert(data?.error || "Erro ao cadastrar empresa");
+        return;
+      }
+
+      alert(`Empresa "${data.name || companyData.name}" cadastrada com sucesso!`);
+
+      // Reset form
+      setCompanyData({
+        name: "",
+        nif: "",
+        defaultCurrency: "AOA"
+      });
+      setErrors({});
+    } catch (error) {
+      alert("Erro de conexão com o servidor");
+    } finally {
       setProcessing(false);
-    }, 1500);
+    }
   };
 
   return (
     <div className="reconciliation-container-empresa">
       <div className="page-header-empresa">
         <h1>Cadastrar Nova Empresa</h1>
-        <p>Preencha os dados da empresa e das contas bancárias</p>
+        <p>Preencha os dados da empresa</p>
       </div>
 
       <div className="register-card-empresa">
@@ -116,7 +151,13 @@ export default function Cadastroempresas() {
                         value={companyData.name}
                         onChange={handleCompanyChange}
                         required
+                        className={errors.name ? "error-input" : ""}
                       />
+                      {errors.name && (
+                        <div className="error-message" style={{ color: "red", fontSize: "0.9em", marginTop: "5px" }}>
+                          {errors.name}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -133,94 +174,16 @@ export default function Cadastroempresas() {
                         value={companyData.nif}
                         onChange={handleCompanyChange}
                         required
+                        className={errors.nif ? "error-input" : ""}
                       />
+                      {errors.nif && (
+                        <div className="error-message" style={{ color: "red", fontSize: "0.9em", marginTop: "5px" }}>
+                          {errors.nif}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Contas Bancárias */}
-            <div className="upload-card-empresa">
-              <div className="upload-header-empresa">
-                <div className="upload-icon-empresa">
-                  <i className="fas fa-university"></i>
-                </div>
-                <h3>Contas Bancárias</h3>
-              </div>
-
-              <div className="upload-area-empresa" style={{ padding: "20px" }}>
-                <div className="bank-accounts-header-empresa">
-                  <p>Adicione as contas bancárias da empresa</p>
-                  <button
-                    type="button"
-                    className="upload-btn-empresa"
-                    onClick={addAccount}
-                    disabled={bankAccounts.length >= 5}
-                  >
-                    <i className="fas fa-plus"></i> Adicionar Conta
-                  </button>
-                </div>
-
-                {bankAccounts.map((account, index) => (
-                  <div key={index} className="bank-account-item-empresa">
-                    {bankAccounts.length > 1 && (
-                      <button
-                        type="button"
-                        className="file-action-btn-empresa"
-                        onClick={() => removeAccount(index)}
-                        style={{ position: "absolute", right: "10px", top: "10px" }}
-                      >
-                        <i className="fas fa-times"></i>
-                      </button>
-                    )}
-
-                    <div className="account-fields-empresa">
-                      <div className="form-group-empresa">
-                        <label htmlFor={`accountNumber_${index}`}>
-                          <i className="fas fa-credit-card"></i> Número da Conta
-                        </label>
-                        <div className="input-with-icon-empresa">
-                          <input
-                            type="text"
-                            id={`accountNumber_${index}`}
-                            placeholder="Número da conta"
-                            value={account.accountNumber}
-                            onChange={(e) =>
-                              handleAccountChange(index, "accountNumber", e.target.value)
-                            }
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-group-empresa">
-                        <label htmlFor={`accountIBAN_${index}`}>
-                          <i className="fas fa-university"></i> IBAN
-                        </label>
-                        <div className="input-with-icon-empresa">
-                          <input
-                            type="text"
-                            id={`accountIBAN_${index}`}
-                            placeholder="Código IBAN"
-                            value={account.iban}
-                            onChange={(e) =>
-                              handleAccountChange(index, "iban", e.target.value)
-                            }
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {bankAccounts.length >= 5 && (
-                  <div className="max-accounts-message-empresa">
-                    <i className="fas fa-info-circle"></i>
-                    Máximo de 5 contas bancárias atingido
-                  </div>
-                )}
               </div>
             </div>
           </div>
