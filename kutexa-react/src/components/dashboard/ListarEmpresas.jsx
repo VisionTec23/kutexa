@@ -19,7 +19,7 @@ export default function ListarEmpresas() {
 
       try {
         const response = await fetch(
-          "http://localhost:3000/api/v1/companies/",
+          "https://kutexa-api.onrender.com/api/v1/companies/",
           {
             method: "GET",
             headers: {

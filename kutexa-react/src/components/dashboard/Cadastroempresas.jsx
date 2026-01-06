@@ -46,17 +46,14 @@ export default function Cadastroempresas() {
     if (Object.keys(validationErrors).length > 0) return;
     
     const token = localStorage.getItem("token");
-    
     if (!token) {
       alert("Sessão expirada. Faça login novamente.");
       return;
     }
-
     setProcessing(true);
-
     try {
       const response = await fetch(
-        "http://localhost:3000/api/v1/companies/",
+        "https://kutexa-api.onrender.com/api/v1/companies/",
         {
           method: "POST",
           headers: {

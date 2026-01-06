@@ -115,7 +115,7 @@ export default function SignupPage() {
     }
     
     try {
-      const response = await fetch('http://localhost:3000/api/v1/auth/register', {
+      const response = await fetch('https://kutexa-api.onrender.com/api/v1/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -126,7 +126,6 @@ export default function SignupPage() {
           company: formData.company
         })
       });
-      
       const data = await response.json();
       console.log("RESPOSTA DO CADASTRO:", data);
       
