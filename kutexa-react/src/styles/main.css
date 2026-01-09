@@ -76,7 +76,7 @@ html {
     font-size: 100%;
 }
 
-body {
+.neo-theme{
     font-family: var(--font-body);
     background-color: var(--neo-black);
     color: var(--neo-white);
@@ -87,7 +87,7 @@ body {
     min-height: 100vh;
 }
 
-body::before {
+.neo-theme::before {
     content: '';
     position: fixed;
     top: 0;
@@ -319,6 +319,7 @@ body::before {
 
 /* Quantum Hero */
 .quantum-hero {
+ 
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -1448,7 +1449,7 @@ body::before {
 
 /* Suporte para Dark Mode do Sistema */
 @media (prefers-color-scheme: dark) {
-    body {
+    .neo-theme{
         background-color: var(--neo-black);
     }
     
@@ -1468,7 +1469,7 @@ body::before {
         display: none;
     }
     
-    body {
+    .neo-theme{
         background: white;
         color: black;
     }

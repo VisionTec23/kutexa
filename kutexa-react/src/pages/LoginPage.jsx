@@ -132,6 +132,8 @@ export default function LoginPage() {
         }
       }
     } catch (error) {
+      console.error("ERRO COMPLETO:", error);
+      console.error("MENSAGEM:", error.message);
       console.log("ERRO DE REDE:", error);
       showNotification("Erro de conexão com o servidor. Verifique sua internet.", "error");
     } finally {
