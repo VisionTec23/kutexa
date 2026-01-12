@@ -1,6 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
- 
+import CadastroempresasPage from "./pages/CadastroempresasPage";
 import DashboardPage from "./pages/DashboardPage";
 import LandingPage from "./pages/LandingPage";
 import ListarEmpresasPage from "./pages/ListarEmpresasPage";
@@ -16,7 +16,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/dashboard" element={< DashboardPage/>} />
         <Route path="/reconciliation" element={< ReconciliationPage/>} />
-        <Route path="/cadastroempresas" element={<ListarEmpresasPage/>}/>
+        <Route path="/cadastroempresas" element={<CadastroempresasPage/>}/>
         <Route path="/listarEmpresas" element={<ListarEmpresasPage/>}/>
       </Routes>
     </BrowserRouter>
