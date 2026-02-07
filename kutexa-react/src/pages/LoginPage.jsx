@@ -57,7 +57,6 @@ export default function LoginPage() {
       });
 
       const data = await response.json();
-      
       console.log("RESPOSTA:", data);
       
       if (response.ok) {
@@ -208,7 +207,6 @@ export default function LoginPage() {
             />
             {errors.password && <span className="field-error">{errors.password}</span>}
           </div>
-
           <div className="form-options">
             <label className="checkbox-label">
               <input type="checkbox" />
@@ -235,7 +233,7 @@ export default function LoginPage() {
             <span>ou</span>
           </div>
 
-          <div className="action-buttons">
+          {/* <div className="action-buttons">
             <button 
               type="button" 
               className="demo-button"
@@ -245,7 +243,7 @@ export default function LoginPage() {
               Usar credenciais de teste
             </button>
            
-          </div>
+          </div> */}
         </form>
 
         <div className="login-footer">
