@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import { AlertProvider } from "./contexts/AlertContext";
 import CadastroempresasPage from "./pages/CadastroempresasPage";
 import DashboardPage from "./pages/DashboardPage";
 import LandingPage from "./pages/LandingPage";
@@ -9,6 +10,7 @@ import ReconciliationPage from "./pages/ReconciliationPage";
 import SignupPage from "./pages/SignupPage";
 function App() {
   return (
+    <AlertProvider> 
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -20,6 +22,7 @@ function App() {
         <Route path="/listarEmpresas" element={<ListarEmpresasPage/>}/>
       </Routes>
     </BrowserRouter>
+    </AlertProvider>
   );
 }
 

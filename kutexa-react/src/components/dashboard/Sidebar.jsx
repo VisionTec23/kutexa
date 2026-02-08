@@ -1,8 +1,33 @@
 import { useState } from 'react';
 
-function Sidebar({ isOpen, onLogout }) {
+function Sidebar({ isOpen}) {
   const [companiesMenuOpen, setCompaniesMenuOpen] = useState(false);
   const [reconciliationMenuOpen, setReconciliationMenuOpen] = useState(false);
+
+  const  onLogout  =async () => {
+
+      try {
+        const token =  localStorage.getItem('storage');
+          
+        await fetch('https://kutexa-api.onrender.com/api/v1/auth/logout',{
+          method:"POST",
+          headers:{
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+      } catch (error) {
+        
+        console.error('Erro ao fazer logout',error)
+      } finally{
+         localStorage.removeItem('token')
+         localStorage.removeItem('user')
+            window.location.href = '/login'
+
+      }
+  }
+
+  
 
   const menuItems = [
     {
@@ -32,29 +57,29 @@ function Sidebar({ isOpen, onLogout }) {
         { text: 'Reconciliamento com ERP', onClick: () => window.location.href = '/reconciliamento-erp' }
       ]
     },
-    {
-      id: 'reports',
-      icon: 'fas fa-chart-bar',
-      text: 'Relatórios',
-      onClick: () => window.location.href = '/relatorios'
-    },
-    {
-      id: 'analysis',
-      icon: 'fas fa-chart-pie',
-      text: 'Análise Financeira',
-      onClick: () => window.location.href = '/analise-financeira'
-    },
-    {
-      id: 'settings',
-      icon: 'fas fa-cog',
-      text: 'Configurações',
-      onClick: () => window.location.href = '/configuracoes'
-    },
+    // {
+    //   id: 'reports',
+    //   icon: 'fas fa-chart-bar',
+    //   text: 'Relatórios',
+    //   onClick: () => window.location.href = '/relatorios'
+    // },
+    // {
+    //   id: 'analysis',
+    //   icon: 'fas fa-chart-pie',
+    //   text: 'Análise Financeira',
+    //   onClick: () => window.location.href = '/analise-financeira'
+    // },
+    // {
+    //   id: 'settings',
+    //   icon: 'fas fa-cog',
+    //   text: 'Configurações',
+    //   onClick: () => window.location.href = '/configuracoes'
+    // },
     {
       id: 'logout',
       icon: 'fas fa-sign-out-alt',
       text: 'Sair',
-      onClick: onLogout
+      onClick: () => onLogout() 
     }
   ];
 

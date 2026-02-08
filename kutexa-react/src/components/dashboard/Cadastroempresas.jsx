@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { useAlert } from "../../contexts/AlertContext";
 import "../../styles/reconciliation.css";
-
 export default function Cadastroempresas() {
   const [companyData, setCompanyData] = useState({
     name: "",
@@ -8,7 +8,7 @@ export default function Cadastroempresas() {
     defaultCurrency: "AOA"
   });
 
-  const [processing, setProcessing] = useState(false);
+    const [processing, setProcessing] = useState(false);
   const [errors, setErrors] = useState({});
 
   const handleCompanyChange = (e) => {
@@ -18,6 +18,9 @@ export default function Cadastroempresas() {
       [name]: value
     }));
   };
+
+ 
+const {showNotification} = useAlert();
 
   const validateCompanyForm = () => {
     const newErrors = {};
@@ -47,7 +50,7 @@ export default function Cadastroempresas() {
     
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Sessão expirada. Faça login novamente.");
+      showNotification("Sessão expirada. Faça login novamente.");
       return;
     }
     setProcessing(true);
@@ -65,30 +68,28 @@ export default function Cadastroempresas() {
             name: companyData.name,
             nif: companyData.nif,
             defaultCurrency: companyData.defaultCurrency,
-            bankAccounts: [] // Envia array vazio conforme a API espera
+          
           })
         }
       );
-
       const data = await response.json();
 
       if (response.status === 409) {
-        setErrors({ nif: "Já existe uma empresa com este NIF" });
-        alert("Empresa já cadastrada com este NIF");
+        showNotification("Empresa já cadastrada com este NIF","error");
         return;
       }
 
       if (response.status === 401) {
-        alert("Não autorizado. Faça login novamente.");
+        showNotification("Não autorizado. Faça login novamente.");
         return;
       }
 
       if (!response.ok) {
-        alert(data?.error || "Erro ao cadastrar empresa");
+        showNotification(data.error || "Erro ao cadastrar empresa");
         return;
       }
 
-      alert(`Empresa "${data.name || companyData.name}" cadastrada com sucesso!`);
+      showNotification(`Empresa "${data.name || companyData.name}" cadastrada com sucesso!` ,"success");
 
       // Reset form
       setCompanyData({
@@ -98,7 +99,7 @@ export default function Cadastroempresas() {
       });
       setErrors({});
     } catch (error) {
-      alert("Erro de conexão com o servidor");
+      showNotification("Erro de conexão com o servidor");
     } finally {
       setProcessing(false);
     }

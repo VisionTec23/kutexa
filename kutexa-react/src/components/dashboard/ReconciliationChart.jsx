@@ -1,14 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useAlert } from "../../contexts/AlertContext";
 import "../../styles/reconciliation.css";
 
 export default function Reconciliation() {
   const [bankStatementFile, setBankStatementFile] = useState(null);
   const [invoiceFiles, setInvoiceFiles] = useState([]);
   const [processing, setProcessing] = useState(false);
-
+const {showNotification} = useAlert();
   const extratosRef = useRef(null);
+  const [companies, setCompanies] = useState([]);
   const faturasRef = useRef(null);
-
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const processBtnRef = useRef(null);
  
   const formatFileSize = (bytes) => {
@@ -26,6 +30,55 @@ export default function Reconciliation() {
     if (["jpg", "jpeg", "png", "gif"].includes(ext)) return "fa-file-image";
     return "fa-file";
   };
+
+
+     useEffect(() => {
+      const fetchCompanies = async () => {
+        const token = localStorage.getItem("token");
+  
+        if (!token) {
+          showNotification("Sessão expirada. Faça login novamente.","error");
+        
+          return;
+        }
+  
+        try {
+          const response = await fetch(
+            "https://kutexa-api.onrender.com/api/v1/companies/",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+              credentials: "include"
+            }
+          );
+  
+          if (response.status === 401) {
+            showNotification("Token inválido ou expirado. Faça login novamente.","error");
+            return;
+          }
+  
+          if (!response.ok) {
+            throw new Error("Erro ao buscar empresas");
+          }
+  
+          const data = await response.json();
+          setCompanies(data);
+          console.log(data)
+        } catch (err) {
+          showNotification("Erro de conexão com o servidor","error");
+        } finally {
+         
+        }
+      };
+  
+      fetchCompanies();
+    }, []);
+  
+
+
 
   // Upload handlers
   const handleBankStatementChange = (e) => {
@@ -81,12 +134,60 @@ export default function Reconciliation() {
     }, 3000);
   };
 
+
+
+  // Listar empressa
+
+ 
+
   return (
     <div className="reconciliation-container">
       <div className="page-header">
         <h1>Processo de Reconciliação</h1>
         <p>Envie o extrato bancário e as faturas para reconciliação automática</p>
       </div>
+ 
+        <div className="reconcilia-filters-container">
+      <div className="reconcilia-field">
+        <label htmlFor="company-select" className="reconcilia-label">Empresa:</label>
+        <select
+          id="company-select"
+          value={selectedCompany}
+          onChange={(e) => setSelectedCompany(e.target.value)}
+          className="reconcilia-select"
+        >
+          <option value="">Selecione uma empresa</option>
+          {companies.map((company) => (
+            <option key={company.id} value={company.id}>
+              {company.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+          <div className="reconcilia-field">
+            <label htmlFor="start-date" className="reconcilia-label">Data de Início:</label>
+            <input
+              type="date"
+              id="start-date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="reconcilia-date"
+            />
+          </div>
+
+          <div className="reconcilia-field">
+            <label htmlFor="end-date" className="reconcilia-label">Data de Finalização:</label>
+            <input
+              type="date"
+              id="end-date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="reconcilia-date"
+            />
+          </div>
+      </div>
+
 
       <div className="upload-section">
         {/* Extrato Bancário */}
