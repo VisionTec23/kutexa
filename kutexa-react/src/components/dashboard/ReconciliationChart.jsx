@@ -121,18 +121,63 @@ const {showNotification} = useAlert();
   };
 
   // Process reconciliation
-  const processReconciliation = () => {
-    if (!bankStatementFile || invoiceFiles.length === 0) return;
+  
+const processReconciliation = async () => {
+  if (!bankStatementFile || invoiceFiles.length === 0) return;
 
-    setProcessing(true);
+  setProcessing(true);
 
-    setTimeout(() => {
-      alert("✅ Reconciliação concluída com sucesso!");
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      showNotification("Sessão expirada. Faça login novamente.", "error");
       setProcessing(false);
+      return;
+    }
+
+    // Criar FormData
+    const formData = new FormData();
+    formData.append("companyId", selectedCompany);
+    formData.append("periodStart", startDate);
+    formData.append("periodEnd", endDate);
+
+ 
+    formData.append("files", bankStatementFile);  
+    invoiceFiles.forEach((file) => formData.append("files", file));  
+
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+    const response = await fetch(
+      "https://kutexa-api.onrender.com/api/v1/reconciliation-jobs/upload",
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },  
+        body: formData,
+      }
+    );
+    console.log("Status:", response.status);
+    try {
+      const data = await response.json();
+      console.log("Resposta da API:", data);
+    } catch {
+      console.log("Resposta não retornou JSON");
+    }
+
+    if (response.ok) {
+      showNotification("✅ Reconciliação concluída com sucesso!", "success");
       removeBankStatement();
       setInvoiceFiles([]);
-    }, 3000);
-  };
+    } else {
+      showNotification("Erro ao processar reconciliação", "error");
+    }
+  } catch (err) {
+    console.error(err);
+    showNotification(err.message, "error");
+  } finally {
+    setProcessing(false);
+  }
+};
 
 
 
@@ -271,7 +316,7 @@ const {showNotification} = useAlert();
               type="file"
               ref={faturasRef}
               multiple
-              accept=".pdf,.xlsx,.jpg,.jpeg,.png"
+              accept=".pdf,.xlsx,.csv"
               style={{ display: "none" }}
               onChange={handleInvoiceChange}
             />
