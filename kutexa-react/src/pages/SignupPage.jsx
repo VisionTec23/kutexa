@@ -137,7 +137,6 @@ export default function SignupPage() {
             
             localStorage.setItem('user', JSON.stringify(data.user));
           }
-      
           setTimeout(() => {
             navigate('/dashboard');
           }, 2000);
@@ -178,24 +177,24 @@ export default function SignupPage() {
               setErrors(fieldErrors);
               showNotification("Erro de validação. Verifique os campos destacados.", "error");
             } else {
-              showNotification(data.message || 'Dados inválidos. Verifique as informações.', "error");
+              showNotification(data.detail || 'Dados inválidos. Verifique as informações.', "error");
             }
             break;
             
           case 409:
-            if (data.message && data.message.includes('email')) {
+            if (data.detail && data.detail.includes('email')) {
               setErrors({ email: 'Este email já está cadastrado.' });
               showNotification("Este email já está cadastrado.", "warning");
-            } else if (data.message && (data.message.includes('telefone') || data.message.includes('phone'))) {
+            } else if (data.detail && (data.detail.includes('telefone') || data.detail.includes('phone'))) {
               setErrors({ phone: 'Este número de telefone já está cadastrado.' });
               showNotification("Este número de telefone já está cadastrado.", "warning");
             } else {
-              showNotification(data.message || 'Usuário já cadastrado.', "warning");
+              showNotification(data.detail || 'Usuário já cadastrado.', "warning");
             }
             break;
             
           case 422:
-            showNotification(data.message || "Erro de validação dos dados.", "error");
+            showNotification(data.detail || "Erro de validação dos dados.", "error");
             break;
             
           case 429:
@@ -205,9 +204,8 @@ export default function SignupPage() {
           case 500:
             showNotification("Erro interno do servidor. Tente novamente mais tarde.", "error");
             break;
-            
           default:
-            showNotification(data.message || `Erro ${response.status} no cadastro`, "error");
+            showNotification(data.detail || `Erro ${response.status} no cadastro`, "error");
         }
       }
     } catch (error) {

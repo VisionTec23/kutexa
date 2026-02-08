@@ -41,20 +41,28 @@ function DashboardPage({ onLogout }) {
     });
   }, [chartPeriod]);
 
+
+  // get  user localStorage 
+
+
+  const  user = JSON.parse(localStorage.getItem('user'));
+
+  const userName = user?.name || 'Usuário';
+  
+
   return (
-    <DashboardLayout onLogout={onLogout} userName="Adilson Fernandes">
+    <DashboardLayout onLogout={onLogout} userName={userName}>
       <div className="welcome-banner">
         <div className="welcome-text">
           <h2>Bem-vindo de volta!</h2>
           <p>Seu dashboard foi atualizado com as últimas reconciliações.</p>
         </div>
-        <Link to="/reconciliation"><button className="quick-action"><i className="fas fa-plus"></i> Nova Reconciliação</button></Link>
+        <Link to="/reconciliation"><button className="novareconciliacaobtn"><i className="fas fa-plus"></i> Nova Reconciliação</button></Link>
       </div>
 
       <div className="cards-grid">
         {dashboardCards.map(card => <DashboardCard key={card.id} {...card} />)}
       </div>
-
       <div className="dashboard-content">
         <div className="dashboard-column">
           <section className="history-section">

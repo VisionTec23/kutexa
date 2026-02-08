@@ -527,3 +527,14 @@ body {
     display: none;
   }
 }
+/* btn reconcialiacao */
+
+.novareconciliacaobtn{
+ background-color: #14532D;
+ border: 1px solid black;
+ padding: 10px;
+ margin: 10px;
+ border-radius: 20px;
+ color: white;
+ cursor: pointer;
+}
